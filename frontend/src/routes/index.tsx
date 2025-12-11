@@ -6,6 +6,7 @@ import { DashboardPage } from '@/features/dashboard/components/DashboardPage';
 import { PimPage } from '@/features/pim/pages/PimPage';
 import { EmployeeListPage } from '@/features/pim/pages/EmployeeListPage';
 import { AddEmployeePage } from '@/features/pim/pages/AddEmployeePage';
+import { EditEmployeePage } from '@/features/pim/pages/EditEmployeePage';
 import { ReportsPage } from '@/features/pim/pages/ReportsPage';
 import { AddReportPage } from '@/features/pim/pages/AddReportPage';
 import { ConfigurationPage } from '@/features/pim/pages/ConfigurationPage';
@@ -19,6 +20,12 @@ import { ClaimDetailPage } from '@/features/claims/pages/ClaimDetailPage';
 import { MyClaimsPage } from '@/features/claims/pages/MyClaimsPage';
 import { SubmitClaimPage } from '@/features/claims/pages/SubmitClaimPage';
 import { ClaimsConfigPage } from '@/features/claims/pages/ClaimsConfigPage';
+import { useAuth } from '@/features/authentication/hooks/useAuth';
+
+const RootRedirect: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  return <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />;
+};
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -53,6 +60,14 @@ export const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <AddEmployeePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pim/employees/:id/edit"
+        element={
+          <ProtectedRoute>
+            <EditEmployeePage />
           </ProtectedRoute>
         }
       />
@@ -169,6 +184,7 @@ export const AppRoutes: React.FC = () => {
         }
       />
       <Route path="/" element={<LoginPage />} />
+      <Route path="/" element={<RootRedirect />} />
     </Routes>
   );
 };

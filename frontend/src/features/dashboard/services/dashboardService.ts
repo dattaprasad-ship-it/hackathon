@@ -14,7 +14,14 @@ import type {
 
 const handleApiError = (error: unknown): never => {
   if (axios.isAxiosError(error)) {
+    // Handle network errors (ECONNREFUSED, timeout, etc.)
     if (!error.response) {
+      const errorCode = (error as any).code;
+      if (errorCode === 'ECONNREFUSED' || errorCode === 'ERR_NETWORK') {
+        throw new Error(
+          'Backend API is not available. Please ensure the backend server is running on port 3000.'
+        );
+      }
       throw new Error(
         'Network Error: Backend API is not available. Please ensure the backend server is running.'
       );

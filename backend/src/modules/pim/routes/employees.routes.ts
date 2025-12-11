@@ -79,8 +79,8 @@ export const createEmployeesRoutes = (
       try {
         const query = req.query as any;
         const filters: EmployeeListQueryDto = {
-          employeeName: query.employeeName,
-          employeeId: query.employeeId,
+          employeeName: query.employeeName && typeof query.employeeName === 'string' ? query.employeeName.trim() : undefined,
+          employeeId: query.employeeId && typeof query.employeeId === 'string' ? query.employeeId.trim() : undefined,
           employmentStatusId: query.employmentStatusId,
           jobTitleId: query.jobTitleId,
           subUnitId: query.subUnitId,
