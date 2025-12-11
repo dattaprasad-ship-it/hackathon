@@ -132,7 +132,11 @@ export class AttachmentsService {
       throw new BusinessException('Attachment not found', 404, 'NOT_FOUND');
     }
 
-    const claimId = (attachment.claim as any).id;
+    if (!attachment.claim || !attachment.claim.id) {
+      throw new BusinessException('Attachment claim not found', 404, 'NOT_FOUND');
+    }
+
+    const claimId = attachment.claim.id;
 
     // Validate claim status
     const claim = await this.claimRepository.findByIdWithRelations(claimId);

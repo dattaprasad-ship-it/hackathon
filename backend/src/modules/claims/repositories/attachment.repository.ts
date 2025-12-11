@@ -7,6 +7,13 @@ export class AttachmentRepository extends IGenericRepository<Attachment> {
     super(repository);
   }
 
+  async findById(id: string): Promise<Attachment | null> {
+    return this.repository.findOne({
+      where: { id },
+      relations: ['claim'],
+    });
+  }
+
   async findByClaimId(claimId: string): Promise<Attachment[]> {
     return this.repository.find({
       where: { claim: { id: claimId } },

@@ -4,7 +4,6 @@ import { LoginPage } from '@/features/authentication/components/LoginPage';
 import { ProtectedRoute } from './ProtectedRoute';
 import { DashboardPage } from '@/features/dashboard/components/DashboardPage';
 import { PimPage } from '@/features/pim/pages/PimPage';
-import { EmployeeListPage } from '@/features/pim/pages/EmployeeListPage';
 import { AddEmployeePage } from '@/features/pim/pages/AddEmployeePage';
 import { EditEmployeePage } from '@/features/pim/pages/EditEmployeePage';
 import { ReportsPage } from '@/features/pim/pages/ReportsPage';
@@ -183,7 +182,6 @@ export const AppRoutes: React.FC = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="/" element={<LoginPage />} />
       <Route path="/" element={<RootRedirect />} />
     </Routes>
   );

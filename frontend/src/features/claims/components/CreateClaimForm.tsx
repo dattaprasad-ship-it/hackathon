@@ -34,11 +34,13 @@ export const CreateClaimForm: React.FC<CreateClaimFormProps> = ({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, touchedFields, isSubmitted },
     setValue,
     watch,
+    clearErrors,
   } = useForm<CreateClaimRequest>({
     resolver: zodResolver(createClaimSchema),
+    mode: 'onSubmit', // Only validate on submit, not on change
     defaultValues: {
       employeeId: '',
       eventTypeId: '',
@@ -51,11 +53,60 @@ export const CreateClaimForm: React.FC<CreateClaimFormProps> = ({
 
   React.useEffect(() => {
     if (selectedEmployee) {
-      setValue('employeeId', selectedEmployee.id);
+      setValue('employeeId', selectedEmployee.id, { shouldValidate: false });
+      clearErrors('employeeId');
+    } else {
+      // Clear employeeId when no employee is selected
+      setValue('employeeId', '', { shouldValidate: false });
     }
-  }, [selectedEmployee, setValue]);
+  }, [selectedEmployee, setValue, clearErrors]);
+
+  // Clear selected employee when user types (not selecting from dropdown)
+  const handleEmployeeNameChange = (value: string) => {
+    setEmployeeName(value);
+    // If the value doesn't match the selected employee's name, clear selection
+    if (selectedEmployee) {
+      const selectedName = `${selectedEmployee.firstName} ${selectedEmployee.lastName}`;
+      if (value !== selectedName) {
+        setSelectedEmployee(null);
+        setValue('employeeId', '', { shouldValidate: false });
+        clearErrors('employeeId');
+      }
+    } else {
+      // Clear error when user starts typing
+      clearErrors('employeeId');
+    }
+  };
+
+  // Handle employee selection from autocomplete
+  const handleEmployeeSelect = (employee: Employee | null) => {
+    if (employee) {
+      setSelectedEmployee(employee);
+      const displayName = `${employee.firstName} ${employee.lastName}`;
+      setEmployeeName(displayName);
+      // Set employeeId immediately when employee is selected
+      setValue('employeeId', employee.id, { shouldValidate: false });
+      clearErrors('employeeId');
+    } else {
+      setSelectedEmployee(null);
+      setEmployeeName('');
+      setValue('employeeId', '', { shouldValidate: false });
+    }
+  };
 
   const onFormSubmit = async (data: CreateClaimRequest) => {
+    // Ensure employeeId is set if employee is selected
+    if (selectedEmployee && !data.employeeId) {
+      data.employeeId = selectedEmployee.id;
+      setValue('employeeId', selectedEmployee.id, { shouldValidate: true });
+    }
+
+    // Validate employeeId is present
+    if (!data.employeeId || data.employeeId.trim() === '') {
+      setValue('employeeId', '', { shouldValidate: true });
+      return; // Form validation will show the error
+    }
+
     try {
       await createClaim(data);
       if (onSuccess) {
@@ -77,18 +128,20 @@ export const CreateClaimForm: React.FC<CreateClaimFormProps> = ({
             <label htmlFor="employeeName" className="block text-sm font-medium text-gray-700 mb-1">
               Employee Name *
             </label>
+            {/* Hidden input to ensure employeeId is part of form state */}
+            <input type="hidden" {...register('employeeId')} />
             <EmployeeNameAutocomplete
               id="employeeName"
               value={employeeName}
-              onChange={setEmployeeName}
-              onSelect={setSelectedEmployee}
+              onChange={handleEmployeeNameChange}
+              onSelect={handleEmployeeSelect}
               placeholder="Search and select employee..."
             />
-            {errors.employeeId && (
+            {errors.employeeId && (isSubmitted || touchedFields.employeeId) && (
               <p className="mt-1 text-sm text-red-600">{errors.employeeId.message}</p>
             )}
-            {!selectedEmployee && watchedEmployeeId && (
-              <p className="mt-1 text-sm text-red-600">Please select an employee from the suggestions</p>
+            {!selectedEmployee && employeeName && !errors.employeeId && (
+              <p className="mt-1 text-sm text-yellow-600">Please select an employee from the suggestions</p>
             )}
           </div>
 

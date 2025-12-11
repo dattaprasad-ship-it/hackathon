@@ -43,7 +43,7 @@ export interface Expense {
   expenseType: {
     id: string;
     name: string;
-  };
+  } | null;
   expenseDate: string;
   amount: number;
   note?: string;

@@ -101,7 +101,11 @@ export class ExpensesService {
       throw new BusinessException('Expense not found', 404, 'NOT_FOUND');
     }
 
-    const claimId = (expense.claim as any).id;
+    if (!expense.claim || !expense.claim.id) {
+      throw new BusinessException('Expense claim not found', 404, 'NOT_FOUND');
+    }
+
+    const claimId = expense.claim.id;
 
     // Validate claim status
     const claim = await this.claimRepository.findByIdWithRelations(claimId);
@@ -183,7 +187,11 @@ export class ExpensesService {
       throw new BusinessException('Expense not found', 404, 'NOT_FOUND');
     }
 
-    const claimId = (expense.claim as any).id;
+    if (!expense.claim || !expense.claim.id) {
+      throw new BusinessException('Expense claim not found', 404, 'NOT_FOUND');
+    }
+
+    const claimId = expense.claim.id;
 
     // Validate claim status
     const claim = await this.claimRepository.findByIdWithRelations(claimId);

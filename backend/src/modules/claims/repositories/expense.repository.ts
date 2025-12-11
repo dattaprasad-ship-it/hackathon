@@ -7,6 +7,13 @@ export class ExpenseRepository extends IGenericRepository<Expense> {
     super(repository);
   }
 
+  async findById(id: string): Promise<Expense | null> {
+    return this.repository.findOne({
+      where: { id },
+      relations: ['claim'],
+    });
+  }
+
   async findByClaimId(claimId: string): Promise<Expense[]> {
     return this.repository.find({
       where: { claim: { id: claimId } },

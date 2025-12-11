@@ -115,7 +115,7 @@ export const ExpensesSection: React.FC<ExpensesSectionProps> = ({ claimId }) => 
                   {expenses.map((expense) => (
                     <tr key={expense.id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {expense.expenseType.name}
+                        {expense.expenseType?.name || '-'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(expense.expenseDate)}
@@ -131,7 +131,7 @@ export const ExpensesSection: React.FC<ExpensesSectionProps> = ({ claimId }) => 
                           <button
                             onClick={() => handleDelete(expense.id)}
                             className="text-red-600 hover:text-red-900"
-                            aria-label={`Delete expense ${expense.expenseType.name}`}
+                            aria-label={`Delete expense ${expense.expenseType?.name || 'expense'}`}
                           >
                             Delete
                           </button>

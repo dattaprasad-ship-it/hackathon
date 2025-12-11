@@ -8,7 +8,6 @@ import {
   validateAttachmentId,
 } from '../validators/attachments.validator';
 import { validationResult } from 'express-validator';
-import { BusinessException } from '../../../common/exceptions/business.exception';
 import multer from 'multer';
 
 const validate = (req: any, res: Response, next: NextFunction) => {
@@ -29,13 +28,24 @@ const upload = multer({
 });
 
 const mapAttachmentToResponse = (attachment: any) => {
+  // Handle createdAt - could be Date object or string
+  const formatDate = (date: any): string => {
+    if (date instanceof Date) {
+      return date.toISOString();
+    } else if (typeof date === 'string') {
+      return date;
+    } else {
+      return new Date(date).toISOString();
+    }
+  };
+
   return {
     id: attachment.id,
     originalFilename: attachment.originalFilename,
     fileSize: attachment.fileSize,
     fileType: attachment.fileType,
     description: attachment.description,
-    createdAt: attachment.createdAt.toISOString(),
+    createdAt: formatDate(attachment.createdAt),
     createdBy: attachment.createdBy,
   };
 };

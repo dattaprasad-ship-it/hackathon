@@ -10,7 +10,6 @@ import {
   validateUpdateExpense,
 } from '../validators/expenses.validator';
 import { validationResult } from 'express-validator';
-import { BusinessException } from '../../../common/exceptions/business.exception';
 
 const validate = (req: any, res: Response, next: NextFunction) => {
   const errors = validationResult(req);
@@ -22,17 +21,42 @@ const validate = (req: any, res: Response, next: NextFunction) => {
 };
 
 const mapExpenseToResponse = (expense: any) => {
+  // Handle expenseDate - could be Date object or string
+  let expenseDateStr: string;
+  if (expense.expenseDate instanceof Date) {
+    expenseDateStr = expense.expenseDate.toISOString().split('T')[0];
+  } else if (typeof expense.expenseDate === 'string') {
+    // If it's already a string, use it directly or parse it
+    expenseDateStr = expense.expenseDate.split('T')[0];
+  } else {
+    // Fallback: try to create a Date and format it
+    expenseDateStr = new Date(expense.expenseDate).toISOString().split('T')[0];
+  }
+
+  // Handle createdAt and updatedAt - could be Date object or string
+  const formatDate = (date: any): string => {
+    if (date instanceof Date) {
+      return date.toISOString();
+    } else if (typeof date === 'string') {
+      return date;
+    } else {
+      return new Date(date).toISOString();
+    }
+  };
+
   return {
     id: expense.id,
-    expenseType: {
-      id: expense.expenseType.id,
-      name: expense.expenseType.name,
-    },
-    expenseDate: expense.expenseDate.toISOString().split('T')[0],
+    expenseType: expense.expenseType
+      ? {
+          id: expense.expenseType.id,
+          name: expense.expenseType.name,
+        }
+      : null,
+    expenseDate: expenseDateStr,
     amount: parseFloat(expense.amount),
     note: expense.note,
-    createdAt: expense.createdAt.toISOString(),
-    updatedAt: expense.updatedAt.toISOString(),
+    createdAt: formatDate(expense.createdAt),
+    updatedAt: formatDate(expense.updatedAt),
   };
 };
 

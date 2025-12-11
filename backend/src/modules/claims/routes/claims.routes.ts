@@ -24,6 +24,18 @@ const validate = (req: Request, res: Response, next: NextFunction) => {
 import { UserRole } from '../../../constants/enums/user-role.enum';
 
 const mapClaimToResponse = (claim: any) => {
+  // Helper function to format dates (handles both Date objects and strings)
+  const formatDate = (date: any): string | undefined => {
+    if (!date) return undefined;
+    if (date instanceof Date) {
+      return date.toISOString();
+    } else if (typeof date === 'string') {
+      return date;
+    } else {
+      return new Date(date).toISOString();
+    }
+  };
+
   return {
     id: claim.id,
     referenceId: claim.referenceId,
@@ -45,9 +57,9 @@ const mapClaimToResponse = (claim: any) => {
     status: claim.status,
     remarks: claim.remarks,
     totalAmount: parseFloat(claim.totalAmount),
-    submittedDate: claim.submittedDate ? claim.submittedDate.toISOString() : undefined,
-    approvedDate: claim.approvedDate ? claim.approvedDate.toISOString() : undefined,
-    rejectedDate: claim.rejectedDate ? claim.rejectedDate.toISOString() : undefined,
+    submittedDate: formatDate(claim.submittedDate),
+    approvedDate: formatDate(claim.approvedDate),
+    rejectedDate: formatDate(claim.rejectedDate),
     rejectionReason: claim.rejectionReason,
     approver: claim.approver
       ? {
@@ -57,16 +69,28 @@ const mapClaimToResponse = (claim: any) => {
         }
       : undefined,
     expenses: claim.expenses
-      ? claim.expenses.map((exp: any) => ({
-          id: exp.id,
-          expenseType: {
-            id: exp.expenseType.id,
-            name: exp.expenseType.name,
-          },
-          expenseDate: exp.expenseDate.toISOString().split('T')[0],
-          amount: parseFloat(exp.amount),
-          note: exp.note,
-        }))
+      ? claim.expenses.map((exp: any) => {
+          // Handle expenseDate - could be Date object or string
+          let expenseDateStr: string;
+          if (exp.expenseDate instanceof Date) {
+            expenseDateStr = exp.expenseDate.toISOString().split('T')[0];
+          } else if (typeof exp.expenseDate === 'string') {
+            expenseDateStr = exp.expenseDate.split('T')[0];
+          } else {
+            expenseDateStr = new Date(exp.expenseDate).toISOString().split('T')[0];
+          }
+
+          return {
+            id: exp.id,
+            expenseType: {
+              id: exp.expenseType.id,
+              name: exp.expenseType.name,
+            },
+            expenseDate: expenseDateStr,
+            amount: parseFloat(exp.amount),
+            note: exp.note,
+          };
+        })
       : undefined,
     attachments: claim.attachments
       ? claim.attachments.map((att: any) => ({
