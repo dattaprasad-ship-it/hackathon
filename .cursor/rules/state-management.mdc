@@ -1,0 +1,219 @@
+---
+globs: *.slice.ts,*.store.ts
+description: Rules for state management in the React frontend.
+---
+
+# State Management Conventions
+
+This guide defines best practices for state management in the React frontend application.
+
+## State Management Strategy
+
+### When to Use Global State
+
+Use global state management (Redux/Zustand) for:
+- **User authentication state** - Current user, tokens, permissions
+- **Application-wide settings** - Theme, language, preferences
+- **Shared data across many components** - User profile, notifications
+- **Complex state with side effects** - Shopping cart, multi-step forms
+
+### When to Use Local State
+
+Use local component state (`useState`) for:
+- **Component-specific UI state** - Modal open/close, form inputs
+- **Temporary values** - Search input, filter selections
+- **Derived state** - Computed values from props
+
+```typescript
+// ✅ Good - Local state for UI
+const UserCard = ({ user }: UserCardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  return (
+    <div>
+      <button onClick={() => setIsExpanded(!isExpanded)}>Toggle</button>
+      {isExpanded && <UserDetails user={user} />}
+    </div>
+  );
+};
+
+// ✅ Good - Global state for auth
+const useAuth = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+  return { user, isAuthenticated };
+};
+```
+
+## Redux Toolkit Patterns
+
+### Slice Structure
+
+```typescript
+// ✅ Good - Redux Toolkit slice
+// store/slices/authSlice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { User } from '@/features/user/types/user.types';
+
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+  isLoading: boolean;
+}
+
+const initialState: AuthState = {
+  user: null,
+  token: null,
+  isAuthenticated: false,
+  isLoading: false,
+};
+
+const authSlice = createSlice({
+  name: 'auth',
+  initialState,
+  reducers: {
+    setCredentials: (state, action: PayloadAction<{ user: User; token: string }>) => {
+      state.user = action.payload.user;
+      state.token = action.payload.token;
+      state.isAuthenticated = true;
+    },
+    logout: (state) => {
+      state.user = null;
+      state.token = null;
+      state.isAuthenticated = false;
+    },
+    setLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
+  },
+});
+
+export const { setCredentials, logout, setLoading } = authSlice.actions;
+export default authSlice.reducer;
+```
+
+### Async Actions with createAsyncThunk
+
+```typescript
+// ✅ Good - Async thunk for API calls
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { userService } from '@/services/userService';
+
+export const fetchUser = createAsyncThunk(
+  'user/fetchUser',
+  async (userId: string, { rejectWithValue }) => {
+    try {
+      const user = await userService.getById(userId);
+      return user;
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch user');
+    }
+  }
+);
+
+// In slice
+const userSlice = createSlice({
+  name: 'user',
+  initialState,
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.user = action.payload;
+      })
+      .addCase(fetchUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload as string;
+      });
+  },
+});
+```
+
+## Zustand Patterns (Alternative)
+
+```typescript
+// ✅ Good - Zustand store
+// store/userStore.ts
+import { create } from 'zustand';
+import type { User } from '@/features/user/types/user.types';
+
+interface UserState {
+  user: User | null;
+  isLoading: boolean;
+  error: string | null;
+  fetchUser: (userId: string) => Promise<void>;
+  setUser: (user: User) => void;
+  clearUser: () => void;
+}
+
+export const useUserStore = create<UserState>((set) => ({
+  user: null,
+  isLoading: false,
+  error: null,
+  fetchUser: async (userId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      const user = await userService.getById(userId);
+      set({ user, isLoading: false });
+    } catch (error) {
+      set({ 
+        error: error instanceof Error ? error.message : 'Failed to fetch user',
+        isLoading: false 
+      });
+    }
+  },
+  setUser: (user: User) => set({ user }),
+  clearUser: () => set({ user: null }),
+}));
+```
+
+## Custom Hooks for State
+
+### Wrapper Hooks
+
+```typescript
+// ✅ Good - Custom hook wrapping store
+// hooks/useAuth.ts
+import { useSelector, useDispatch } from 'react-redux';
+import { logout } from '@/store/slices/authSlice';
+
+export const useAuth = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.auth.user);
+  const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
+
+  const handleLogout = useCallback(() => {
+    dispatch(logout());
+    // Additional cleanup logic
+  }, [dispatch]);
+
+  return {
+    user,
+    isAuthenticated,
+    logout: handleLogout,
+  };
+};
+```
+
+## Rules
+
+1. **Keep slices focused** - One slice per feature/domain
+2. **Use TypeScript** - Always type state, actions, and selectors
+3. **Normalize data** - Use normalized state shape for complex data
+4. **Avoid deep nesting** - Keep state structure flat when possible
+5. **Use selectors** - Create reusable selectors for derived state
+6. **Handle loading/error states** - Always include loading and error in async operations
+
+```typescript
+// ✅ Good - Selector for derived state
+// store/selectors/userSelectors.ts
+export const selectUserFullName = (state: RootState): string => {
+  const { firstName, lastName } = state.user.user || {};
+  return `${firstName} ${lastName}`.trim();
+};
+```

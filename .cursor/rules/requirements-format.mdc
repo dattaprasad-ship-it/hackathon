@@ -1,0 +1,180 @@
+---
+description: Format and guidelines for writing frontend and backend requirements documents.
+---
+
+# Requirements Document Format
+
+This document defines the mandatory format and structure for creating frontend and backend requirements documents. All requirements documents must follow these guidelines to ensure consistency and completeness.
+
+## Requirements Document Location
+
+Requirements documents must be created in the following structure:
+
+```
+requirements/
+└── [module-name]/
+    ├── backend-requirements.md
+    └── frontend-requirements.md
+```
+
+## Template Files
+
+When creating new requirements documents, use the templates located in `.specify/templates/`:
+
+- **Backend Requirements**: Use `.specify/templates/backend-requirements-template.md`
+- **Frontend Requirements**: Use `.specify/templates/frontend-requirements-template.md`
+
+## Master Document Reference
+
+All requirements documents MUST be derived from and reference `product-info/product-overview.md`, which contains:
+
+- **System Roles & Actors**: Reference these roles in requirements (Admin, Employee, etc.)
+- **Common Functionalities**: Reference shared functionalities (Login, Logout, etc.)
+- **Module Definitions**: Use module descriptions and integration points from the overview
+
+## Requirements Document Structure
+
+### Required Sections
+
+1. **Header Information**
+   - Module name
+   - Creation date
+   - Status (Draft/Review/Approved)
+   - Reference to product-overview.md
+
+2. **Overview Section**
+   - Brief module description (derived from product-overview.md)
+   - System roles used in this module
+   - Common functionalities used
+   - Dependencies
+   - Integration points
+
+3. **Functional Requirements**
+   - Numbered with prefix (FR-BE-XXX for backend, FR-FE-XXX for frontend)
+   - Organized by category (Authentication, API Endpoints, UI Components, etc.)
+   - Each requirement must be specific and testable
+
+4. **Non-Functional Requirements**
+   - Numbered with prefix (NFR-BE-XXX for backend, NFR-FE-XXX for frontend)
+   - Cover scalability, performance, security, accessibility, etc.
+
+5. **Success Criteria**
+   - Numbered with prefix (SC-BE-XXX for backend, SC-FE-XXX for frontend)
+   - Must be measurable and testable
+
+### Backend-Specific Sections
+
+- **API Endpoints**: Detailed endpoint specifications
+- **Data Models**: Entity definitions with attributes and relationships
+- **Error Handling**: Error scenarios and response formats
+- **Business Logic**: Business rules and workflows
+
+### Frontend-Specific Sections
+
+- **Pages/Routes**: Route definitions with access control
+- **UI Components**: Component specifications
+- **User Flows**: Step-by-step user interaction flows
+- **Forms & Input**: Form specifications with validation rules
+- **Error Display**: How errors are shown to users
+
+## Requirement Numbering Convention
+
+- **Backend Functional**: `FR-BE-001`, `FR-BE-002`, etc.
+- **Backend Non-Functional**: `NFR-BE-001`, `NFR-BE-002`, etc.
+- **Frontend Functional**: `FR-FE-001`, `FR-FE-002`, etc.
+- **Frontend Non-Functional**: `NFR-FE-001`, `NFR-FE-002`, etc.
+- **Backend Errors**: `ERR-BE-001`, `ERR-BE-002`, etc.
+- **Frontend Errors**: `ERR-FE-001`, `ERR-FE-002`, etc.
+- **Backend Success Criteria**: `SC-BE-001`, `SC-BE-002`, etc.
+- **Frontend Success Criteria**: `SC-FE-001`, `SC-FE-002`, etc.
+
+## Writing Requirements
+
+### Requirement Format
+
+Each requirement should follow this structure:
+
+```
+- **REQ-ID**: System MUST [specific capability/behavior]
+  - **Additional details**: [If needed]
+  - **Constraints**: [If applicable]
+```
+
+### Requirement Quality Guidelines
+
+1. **Be Specific**: Requirements must be clear and unambiguous
+2. **Be Testable**: Each requirement must be verifiable
+3. **Be Actionable**: Requirements should describe what the system must do, not how
+4. **Reference Roles**: When applicable, specify which system roles can perform actions
+5. **Reference Common Functionalities**: Link to common functionalities from product-overview.md
+6. **Mark Unclear Items**: Use `[NEEDS CLARIFICATION: description]` for ambiguous requirements
+
+### Example Good Requirements
+
+```markdown
+- **FR-BE-001**: System MUST authenticate users via JWT tokens
+  - **Roles**: All authenticated users
+  - **Reference**: Common Functionality "Login" from product-overview.md
+
+- **FR-FE-010**: System MUST provide user profile page
+  - **Route**: `/profile`
+  - **Access**: Protected (requires authentication)
+  - **Roles**: Admin, Employee
+  - **Components**: UserProfileHeader, UserProfileForm, UserProfileActions
+```
+
+### Example Bad Requirements
+
+```markdown
+- ❌ System should have login (too vague, not testable)
+- ❌ Make it fast (not specific, not measurable)
+- ❌ Users can do stuff (not actionable, no role specified)
+```
+
+## Integration with Product Overview
+
+When writing requirements, always:
+
+1. **Check product-overview.md first** for:
+   - System roles that apply to your module
+   - Common functionalities you should reference
+   - Module dependencies and integration points
+
+2. **Reference in requirements**:
+   ```markdown
+   **System Roles Used:**
+   - Admin: Can manage all users (from product-overview.md)
+   - Employee: Can view own profile (from product-overview.md)
+   
+   **Common Functionalities Used:**
+   - Login: Used for authentication (from product-overview.md)
+   ```
+
+3. **Link to specifications**:
+   ```markdown
+   - Reference `specs/[module-name]/backend-specs.md` for technical implementation
+   - Reference `specs/[module-name]/frontend-specs.md` for technical implementation
+   ```
+
+## Checklist for Requirements Documents
+
+Before finalizing a requirements document, ensure:
+
+- [ ] Header information is complete
+- [ ] Overview references product-overview.md
+- [ ] System roles are listed and referenced
+- [ ] Common functionalities are listed and referenced
+- [ ] All requirements are numbered with correct prefix
+- [ ] Requirements are specific, testable, and actionable
+- [ ] Success criteria are measurable
+- [ ] Unclear items are marked with `[NEEDS CLARIFICATION]`
+- [ ] Links to specifications are included
+- [ ] Document follows the template structure
+
+## Related Documentation
+
+- **Templates**: `.specify/templates/backend-requirements-template.md` and `.specify/templates/frontend-requirements-template.md`
+- **Master Document**: `product-info/product-overview.md`
+- **Specifications**: `specs/[module-name]/backend-specs.md` and `specs/[module-name]/frontend-specs.md`
+- **Frontend Structure**: `.cursor/rules/frontend-structure.mdc`
+- **Project Structure**: `.cursor/rules/project-structure.mdc`

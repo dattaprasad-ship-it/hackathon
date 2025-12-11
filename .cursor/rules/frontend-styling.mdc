@@ -1,0 +1,245 @@
+---
+globs: *.css,*.module.css,*.scss,*.tsx,*.ts
+description: Styling conventions for React frontend using Shadcn UI, Tailwind CSS, and Radix UI.
+---
+
+# Frontend Styling Conventions
+
+This guide defines styling conventions and best practices for the React frontend application using Shadcn UI, Tailwind CSS, and Radix UI.
+
+## CSS Modules (Preferred)
+
+Use CSS Modules for component-specific styles to avoid style conflicts.
+
+### File Naming
+
+- Use `.module.css` extension for CSS Modules
+- Match the component file name
+
+```typescript
+// ✅ Good
+// UserCard.tsx
+// UserCard.module.css
+
+// ❌ Bad
+// UserCard.tsx
+// userCard.css (should be .module.css)
+// styles.css (not component-specific)
+```
+
+### Usage
+
+```typescript
+// ✅ Good - CSS Modules
+// UserCard.tsx
+import styles from './UserCard.module.css';
+
+export const UserCard = ({ user }: UserCardProps) => {
+  return (
+    <div className={styles.card}>
+      <h3 className={styles.title}>{user.name}</h3>
+      <p className={styles.email}>{user.email}</p>
+    </div>
+  );
+};
+
+// UserCard.module.css
+.card {
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.email {
+  color: #666;
+  font-size: 0.875rem;
+}
+```
+
+## Class Naming Conventions
+
+### BEM-like Naming
+
+Use descriptive, component-scoped class names:
+
+```css
+/* ✅ Good - Descriptive class names */
+.userCard {
+  /* Base component */
+}
+
+.userCard__header {
+  /* Element */
+}
+
+.userCard__header--highlighted {
+  /* Modifier */
+}
+
+.userCard--active {
+  /* Component modifier */
+}
+
+/* ❌ Bad - Generic names */
+.card {
+  /* Too generic */
+}
+
+.header {
+  /* Not scoped to component */
+}
+```
+
+## Shadcn UI, Tailwind CSS, and Radix UI
+
+### Core Principles
+
+- **Leverage existing components**: Use the existing components provided by Shadcn UI whenever possible.
+- **Customize with Tailwind**: Customize components using styling solutions like Tailwind CSS's utility classes or CSS variables.
+- **Create compound components**: Build more complex UI elements by combining existing Shadcn UI components or Radix UI components.
+- **Use Shadcn form components**: Use Shadcn UI's form components (e.g., `Input`, `Select`) for handling user input.
+- **Implement accessibility**: Implement accessible components by following ARIA guidelines and using appropriate HTML semantics.
+- **Use the `cn` utility**: Use the `cn` utility (classnames library) provided by Shadcn UI to manage CSS class names effectively. The `cn` utility is located in `src/utils/utils.ts`. Do not re-create it.
+- **Do not modify Shadcn UI components**: Do not directly modify the Shadcn UI component code.
+- **Avoid overusing custom CSS**: Do not overuse custom CSS, as Shadcn UI is built with Tailwind CSS.
+- **Avoid inline styles**: Refrain from using inline styles as much as possible. Tailwind provides a comprehensive set of utility classes, so most styling needs can be met without resorting to inline styles. Inline styles can make it harder to maintain and update the styles in your project.
+
+### Utility-First Approach with Tailwind
+
+```typescript
+// ✅ Good - Tailwind utilities
+export const UserCard = ({ user }: UserCardProps) => {
+  return (
+    <div className="p-4 border border-gray-200 rounded-lg shadow-sm">
+      <h3 className="text-xl font-semibold mb-2">{user.name}</h3>
+      <p className="text-gray-600 text-sm">{user.email}</p>
+    </div>
+  );
+};
+```
+
+### Custom Components with Tailwind
+
+```typescript
+// ✅ Good - Extract repeated patterns
+// components/ui/Button.tsx
+interface ButtonProps {
+  variant?: 'primary' | 'secondary' | 'danger';
+  children: React.ReactNode;
+}
+
+const variantClasses = {
+  primary: 'bg-blue-600 hover:bg-blue-700 text-white',
+  secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-800',
+  danger: 'bg-red-600 hover:bg-red-700 text-white',
+};
+
+export const Button = ({ variant = 'primary', children }: ButtonProps) => {
+  return (
+    <button className={`px-4 py-2 rounded ${variantClasses[variant]}`}>
+      {children}
+    </button>
+  );
+};
+```
+
+## Responsive Design
+
+### Mobile-First Approach
+
+```css
+/* ✅ Good - Mobile-first responsive design */
+.userCard {
+  padding: 1rem;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .userCard {
+    padding: 1.5rem;
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .userCard {
+    padding: 2rem;
+  }
+}
+```
+
+## CSS Variables
+
+### Theme Variables
+
+```css
+/* ✅ Good - CSS variables for theming */
+:root {
+  --color-primary: #3b82f6;
+  --color-secondary: #6b7280;
+  --color-danger: #ef4444;
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --border-radius: 8px;
+}
+
+.userCard {
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  color: var(--color-primary);
+}
+```
+
+## Rules
+
+1. **Use Shadcn UI components first** - Before creating any custom common component, always check Shadcn UI common components first
+2. **Use CSS Modules** - Prefer CSS Modules for component-specific styles when needed
+3. **Avoid inline styles** - Refrain from using inline styles as much as possible. Use Tailwind utility classes instead
+4. **Keep styles scoped** - Use component-specific class names
+5. **Follow naming conventions** - Use consistent naming patterns
+6. **Mobile-first** - Design for mobile, then enhance for larger screens
+7. **Use CSS variables** - For theme values and spacing
+8. **Avoid !important** - Use specificity instead
+9. **Organize styles** - Group related styles together
+10. **Use the `cn` utility** - Use the `cn` utility from `src/utils/utils.ts` to manage CSS class names effectively
+11. **Don't modify Shadcn UI components** - Do not directly modify the Shadcn UI component code
+12. **Prefer Tailwind over custom CSS** - Do not overuse custom CSS, as Shadcn UI is built with Tailwind CSS
+
+## Styled Components (If Used)
+
+```typescript
+// ✅ Good - Styled Components pattern
+import styled from 'styled-components';
+
+const Card = styled.div`
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+const Title = styled.h3`
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+`;
+
+export const UserCard = ({ user }: UserCardProps) => {
+  return (
+    <Card>
+      <Title>{user.name}</Title>
+      <p>{user.email}</p>
+    </Card>
+  );
+};
+```

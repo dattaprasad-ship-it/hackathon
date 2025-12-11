@@ -1,0 +1,277 @@
+---
+globs: *.tsx,*.jsx
+description: Rules for defining React components and component conventions.
+---
+
+# React Component Conventions
+
+This guide defines naming conventions and best practices for React components in the frontend application.
+
+## Code Implementation Guidelines
+
+- Use **TypeScript** for type safety. Prefer **interfaces** over types.
+- When generating code, prioritize TypeScript best practices.
+- Follow the coding standards defined in the ESLint configuration.
+- Minimize the use of AI generated comments, instead use clearly named variables and functions.
+- Use **functional and declarative programming patterns**; avoid classes.
+- Prefer native functions over custom or Lodash's, but use Lodash helpers instead of custom solutions when needed.
+- Maintain consistency in naming and problem-solving.
+- Write indistinguishable, simple, and clean code.
+- Use modern (ES6) solutions, e.g., Object destructuring.
+- Use descriptive variable and function/const names.
+- Implement responsive design with Tailwind CSS.
+- Use **Zod** for form validation using schema validation and type inference.
+- Use **React Hook Form** for form handling.
+- Use `const` instead of functions, for example, `const toggle = () => {}`. Also, define a type if possible.
+- Implement accessibility features on elements. For example, a tag should have `tabindex="0"`, `aria-label`, `onClick`, and `onKeyDown`, and similar attributes.
+- Use common components for common UI elements like buttons, inputs, etc. from Shadcn UI, Radix, and Tailwind located in `src/components/commons` and `src/components/ui`.
+- Use `import * as React from 'react'` for all react components.
+- Define component as arrow function with `React.FC<ComponentProps>` or with `React.FC`.
+- Dynamic imports: Use `React.lazy` to load components only when they are needed, improving initial load time. Example: `const MyComponent = React.lazy(() => import('../components/MyComponent'))`. Do not overuse.
+- Break down large components into smaller chunks that can be loaded independently.
+- Before creating any custom common component always check Shadcn UI common components first.
+- Avoid strings for properties in Lodash functions.
+- Prioritize clean code over performance unless necessary.
+- Avoid `any` type unless absolutely needed.
+- Prefer simple solutions over complex ones.
+
+## Component Naming
+
+### File and Component Names
+
+- Use **PascalCase** for component file names and component names (e.g., `FundList`)
+- Component file names should match the component name exactly
+- Use `.tsx` extension for TypeScript React components
+- Use **lowercase with dashes** for non-component files (e.g., `fund-list.tsx`)
+
+```typescript
+// ✅ Good
+// UserProfile.tsx
+export const UserProfile = () => {
+  return <div>User Profile</div>;
+};
+
+// UserCard.tsx
+export const UserCard = ({ user }: UserCardProps) => {
+  return <div>{user.name}</div>;
+};
+
+// ❌ Bad
+// userProfile.tsx (should be PascalCase)
+// UserProfileComponent.tsx (redundant "Component" suffix)
+```
+
+### Code Naming Conventions
+
+- **Component Names**: Use Title Case (e.g., `FundList`)
+- **File Names**: Use PascalCase for components (e.g., `FundList.tsx`), lowercase with dashes for utilities
+- **Enums**: Use TitleCase (e.g., `FundCategory`)
+- **Queries**: Noun for one, plural for many (e.g., `fund`, `stocks`)
+- **Mutations**: Verb+Noun (e.g., `updatePortfolio`)
+
+### Component Structure
+
+Follow this standard component structure:
+
+```typescript
+// 1. Imports (external libraries first, then internal)
+import React from 'react';
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/Button';
+import { useUser } from '@/features/user/hooks/useUser';
+import type { User } from '@/features/user/types/user.types';
+
+// 2. Types/Interfaces
+interface UserProfileProps {
+  userId: string;
+  onUpdate?: (user: User) => void;
+}
+
+// 3. Component
+export const UserProfile = ({ userId, onUpdate }: UserProfileProps) => {
+  // 4. Hooks
+  const { user, isLoading, error } = useUser(userId);
+  const [isEditing, setIsEditing] = useState(false);
+
+  // 5. Event Handlers
+  const handleEdit = () => {
+    setIsEditing(true);
+  };
+
+  const handleSave = async () => {
+    // Save logic
+    setIsEditing(false);
+    onUpdate?.(user);
+  };
+
+  // 6. Early Returns
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!user) return null;
+
+  // 7. Render
+  return (
+    <div className="user-profile">
+      {/* Component JSX */}
+    </div>
+  );
+};
+```
+
+## Component Types
+
+### Functional Components (Preferred)
+
+Always use functional components with hooks:
+
+```typescript
+// ✅ Good
+export const UserCard = ({ user }: UserCardProps) => {
+  return <div>{user.name}</div>;
+};
+
+// ❌ Bad - Class components (avoid unless necessary)
+export class UserCard extends React.Component {
+  // ...
+}
+```
+
+### Component Props
+
+- Use TypeScript interfaces for props
+- Prefix props interfaces with component name + `Props`
+- Use optional chaining for optional props
+- Provide default values when appropriate
+
+```typescript
+// ✅ Good
+interface UserCardProps {
+  user: User;
+  showEmail?: boolean;
+  onSelect?: (user: User) => void;
+}
+
+export const UserCard = ({ 
+  user, 
+  showEmail = false, 
+  onSelect 
+}: UserCardProps) => {
+  return (
+    <div onClick={() => onSelect?.(user)}>
+      <h3>{user.name}</h3>
+      {showEmail && <p>{user.email}</p>}
+    </div>
+  );
+};
+
+// ❌ Bad - Using `any` or missing types
+export const UserCard = ({ user, showEmail, onSelect }: any) => {
+  // ...
+};
+```
+
+## Component Organization
+
+### Component Size
+
+- Keep components focused and small (ideally under 200 lines)
+- Extract complex logic into custom hooks
+- Split large components into smaller sub-components
+
+```typescript
+// ✅ Good - Small, focused component
+export const UserCard = ({ user }: UserCardProps) => {
+  const { isOnline, lastSeen } = useUserStatus(user.id);
+  
+  return (
+    <div>
+      <UserAvatar user={user} />
+      <UserInfo user={user} />
+      <UserStatus isOnline={isOnline} lastSeen={lastSeen} />
+    </div>
+  );
+};
+
+// ❌ Bad - Too large, does too much
+export const UserCard = ({ user }: UserCardProps) => {
+  // 300+ lines of logic and JSX
+};
+```
+
+### Component Composition
+
+Prefer composition over large monolithic components:
+
+```typescript
+// ✅ Good - Composed from smaller components
+export const UserProfile = ({ user }: UserProfileProps) => {
+  return (
+    <div>
+      <UserHeader user={user} />
+      <UserDetails user={user} />
+      <UserActions userId={user.id} />
+    </div>
+  );
+};
+
+// ❌ Bad - Everything in one component
+export const UserProfile = ({ user }: UserProfileProps) => {
+  return (
+    <div>
+      {/* 200 lines of JSX mixing header, details, and actions */}
+    </div>
+  );
+};
+```
+
+## Event Handler Naming
+
+Use descriptive names with `handle` prefix. Event functions should be named with a "handle" prefix, like `handleClick` for `onClick` and `handleKeyDown` for `onKeyDown`:
+
+```typescript
+// ✅ Good
+const handleSubmit = () => { /* ... */ };
+const handleUserClick = (userId: string) => { /* ... */ };
+const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => { /* ... */ };
+const handleKeyDown = (e: React.KeyboardEvent) => { /* ... */ };
+
+// ❌ Bad
+const submit = () => { /* ... */ };
+const onClick = () => { /* ... */ };
+const onChange = () => { /* ... */ };
+```
+
+## Conditional Rendering
+
+Use clear conditional rendering patterns:
+
+```typescript
+// ✅ Good
+{isLoading && <Spinner />}
+{error && <ErrorMessage error={error} />}
+{user ? <UserCard user={user} /> : <EmptyState />}
+
+// ❌ Bad - Unclear logic
+{isLoading ? <Spinner /> : error ? <ErrorMessage /> : user && <UserCard />}
+```
+
+## Memoization
+
+Use `React.memo`, `useMemo`, and `useCallback` judiciously:
+
+```typescript
+// ✅ Good - Memoize expensive computations
+const sortedUsers = useMemo(() => {
+  return users.sort((a, b) => a.name.localeCompare(b.name));
+}, [users]);
+
+// ✅ Good - Memoize callbacks passed to child components
+const handleClick = useCallback(() => {
+  onSelect(user);
+}, [user, onSelect]);
+
+// ❌ Bad - Unnecessary memoization
+const UserCard = React.memo(({ user }: UserCardProps) => {
+  // Simple component that doesn't benefit from memoization
+});
+```

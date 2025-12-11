@@ -1,0 +1,215 @@
+---
+alwaysApply: true
+description: Error handling patterns for React frontend.
+---
+
+# Frontend Error Handling Rules
+
+## Core Principles
+
+### 1. Error Boundaries
+
+Use React Error Boundaries to catch and handle component tree errors gracefully.
+
+```typescript
+// ✅ Good - Error Boundary component
+// components/ErrorBoundary.tsx
+import React, { Component, ErrorInfo, ReactNode } from 'react';
+
+interface Props {
+  children: ReactNode;
+  fallback?: ReactNode;
+}
+
+interface State {
+  hasError: boolean;
+  error: Error | null;
+}
+
+export class ErrorBoundary extends Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+    // Log to error tracking service
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback || <div>Something went wrong</div>;
+    }
+
+    return this.props.children;
+  }
+}
+```
+
+### 2. API Error Handling
+
+Handle API errors consistently in services and hooks.
+
+```typescript
+// ✅ Good - Error handling in service
+export const userService = {
+  getById: async (id: string): Promise<User> => {
+    try {
+      const response = await apiClient.get<User>(`/users/${id}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new NotFoundError('User not found');
+        }
+        if (error.response?.status === 403) {
+          throw new ForbiddenError('Access denied');
+        }
+        throw new ApiError(error.response?.data?.message || 'Failed to fetch user');
+      }
+      throw error;
+    }
+  },
+};
+```
+
+### 3. Custom Error Classes
+
+Create custom error classes for different error types.
+
+```typescript
+// ✅ Good - Custom error classes
+// utils/errors.ts
+export class ApiError extends Error {
+  constructor(message: string, public statusCode?: number) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+export class NotFoundError extends ApiError {
+  constructor(message: string = 'Resource not found') {
+    super(message, 404);
+    this.name = 'NotFoundError';
+  }
+}
+
+export class ForbiddenError extends ApiError {
+  constructor(message: string = 'Access denied') {
+    super(message, 403);
+    this.name = 'ForbiddenError';
+  }
+}
+```
+
+## Error Handling in Components
+
+### Displaying Errors
+
+```typescript
+// ✅ Good - Error display in component
+export const UserProfile = ({ userId }: UserProfileProps) => {
+  const { user, isLoading, error } = useUser(userId);
+
+  if (isLoading) return <Spinner />;
+  
+  if (error) {
+    if (error instanceof NotFoundError) {
+      return <NotFoundMessage message="User not found" />;
+    }
+    return <ErrorMessage error={error} />;
+  }
+
+  if (!user) return null;
+
+  return <UserCard user={user} />;
+};
+```
+
+### Form Error Handling
+
+```typescript
+// ✅ Good - Form validation errors
+export const UserForm = ({ onSubmit }: UserFormProps) => {
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const handleSubmit = async (data: FormData) => {
+    try {
+      setErrors({});
+      await onSubmit(data);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        setErrors(error.fieldErrors);
+      } else {
+        setErrors({ general: 'Failed to save user' });
+      }
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      {errors.general && <div className="error">{errors.general}</div>}
+      <input name="email" />
+      {errors.email && <span className="error">{errors.email}</span>}
+    </form>
+  );
+};
+```
+
+## Error Handling in Hooks
+
+### Data Fetching Hooks
+
+```typescript
+// ✅ Good - Error handling in custom hook
+export const useUser = (userId: string) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    const fetchUser = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        const data = await userService.getById(userId);
+        if (!isCancelled) {
+          setUser(data);
+        }
+      } catch (err) {
+        if (!isCancelled) {
+          setError(err instanceof Error ? err : new Error('Unknown error'));
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchUser();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [userId]);
+
+  return { user, isLoading, error };
+};
+```
+
+## Rules
+
+1. **Always handle errors** - Never let errors go unhandled
+2. **Provide user-friendly messages** - Don't expose technical error details to users
+3. **Log errors appropriately** - Log errors for debugging but show friendly messages to users
+4. **Use Error Boundaries** - Wrap major sections in Error Boundaries
+5. **Handle async errors** - Always catch errors in async operations
+6. **Type errors properly** - Use custom error classes for better error handling

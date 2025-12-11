@@ -1,0 +1,218 @@
+---
+globs: *.service.ts,*.api.ts
+description: Rules for API integration and service layer in the frontend.
+---
+
+# API Integration Conventions
+
+This guide defines best practices for integrating with backend APIs in the React frontend.
+
+## Service Layer Structure
+
+### Service File Naming
+
+- Use **camelCase** with `Service` suffix for service files
+- Place global services in `src/services/`
+- Place feature-specific services in `features/{feature}/services/`
+
+```typescript
+// ✅ Good
+// services/userService.ts
+// services/authService.ts
+// features/products/services/productService.ts
+
+// ❌ Bad
+// services/UserService.ts (should be camelCase)
+// services/user-api.ts (inconsistent naming)
+```
+
+### Service Function Naming
+
+Follow RESTful conventions for service methods:
+
+```typescript
+// ✅ Good
+export const userService = {
+  getAll: (): Promise<User[]> => { /* ... */ },
+  getById: (id: string): Promise<User> => { /* ... */ },
+  create: (data: CreateUserDto): Promise<User> => { /* ... */ },
+  update: (id: string, data: UpdateUserDto): Promise<User> => { /* ... */ },
+  delete: (id: string): Promise<void> => { /* ... */ },
+};
+
+// ❌ Bad
+export const userService = {
+  fetchUsers: () => { /* ... */ }, // Use "get" prefix
+  saveUser: () => { /* ... */ }, // Use "create" or "update"
+  removeUser: () => { /* ... */ }, // Use "delete"
+};
+```
+
+## API Client Setup
+
+### Base API Configuration
+
+```typescript
+// ✅ Good - Centralized API client
+// services/apiClient.ts
+import axios from 'axios';
+
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor for auth tokens
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem('authToken');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Response interceptor for error handling
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Handle unauthorized
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default apiClient;
+```
+
+## Service Implementation
+
+### Standard Service Pattern
+
+```typescript
+// ✅ Good - Complete service implementation
+// services/userService.ts
+import apiClient from './apiClient';
+import type { User, CreateUserDto, UpdateUserDto } from '@/features/user/types/user.types';
+
+export const userService = {
+  getAll: async (params?: { page?: number; limit?: number }): Promise<User[]> => {
+    const response = await apiClient.get<User[]>('/users', { params });
+    return response.data;
+  },
+
+  getById: async (id: string): Promise<User> => {
+    const response = await apiClient.get<User>(`/users/${id}`);
+    return response.data;
+  },
+
+  create: async (data: CreateUserDto): Promise<User> => {
+    const response = await apiClient.post<User>('/users', data);
+    return response.data;
+  },
+
+  update: async (id: string, data: UpdateUserDto): Promise<User> => {
+    const response = await apiClient.put<User>(`/users/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id: string): Promise<void> => {
+    await apiClient.delete(`/users/${id}`);
+  },
+};
+```
+
+## Error Handling
+
+### Service-Level Error Handling
+
+```typescript
+// ✅ Good - Proper error handling
+export const userService = {
+  getById: async (id: string): Promise<User> => {
+    try {
+      const response = await apiClient.get<User>(`/users/${id}`);
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 404) {
+          throw new Error('User not found');
+        }
+        if (error.response?.status === 403) {
+          throw new Error('Access denied');
+        }
+        throw new Error(error.response?.data?.message || 'Failed to fetch user');
+      }
+      throw error;
+    }
+  },
+};
+```
+
+## TypeScript Types
+
+### Request/Response Types
+
+```typescript
+// ✅ Good - Type-safe API calls
+// types/user.types.ts
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
+
+export interface CreateUserDto {
+  name: string;
+  email: string;
+  password: string;
+}
+
+export interface UpdateUserDto {
+  name?: string;
+  email?: string;
+}
+
+export interface UserListResponse {
+  data: User[];
+  total: number;
+  page: number;
+  limit: number;
+}
+```
+
+## Query Parameters
+
+### Handling Query Parameters
+
+```typescript
+// ✅ Good - Typed query parameters
+interface GetUsersParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: 'name' | 'email' | 'createdAt';
+  sortOrder?: 'asc' | 'desc';
+}
+
+export const userService = {
+  getAll: async (params?: GetUsersParams): Promise<UserListResponse> => {
+    const response = await apiClient.get<UserListResponse>('/users', { params });
+    return response.data;
+  },
+};
+```
+
+## Rules
+
+1. **Always use TypeScript types** - Never use `any` for API responses
+2. **Handle errors consistently** - Use try-catch or let errors bubble up to be handled by hooks
+3. **Use async/await** - Prefer async/await over promise chains
+4. **Return data directly** - Extract `response.data` in services, not in components
+5. **Centralize API configuration** - Use a single API client instance
+6. **Include proper headers** - Always set Content-Type and Authorization headers

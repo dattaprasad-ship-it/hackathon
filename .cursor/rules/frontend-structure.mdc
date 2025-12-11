@@ -1,0 +1,174 @@
+---
+description: The official project structure and code location guide for the React frontend.
+---
+
+# Where to Put Your Code
+
+This document defines the mandatory project structure for the React frontend. Following these rules ensures that the codebase remains organized, consistent, and easy to navigate.
+
+## Technology Stack
+
+This project uses:
+- **React** with **TypeScript**
+- **Vite** as the build tool
+- **React Router** for routing
+- **Shadcn UI** and **Radix UI** for component library
+- **Tailwind CSS** for styling
+- **pnpm** as the package manager (prefer using pnpm all the time)
+
+## Root Directory Structure
+
+```
+-- .cursor/rules          # Cursor rules
+-- .vscode                # VS Code / Cursor editor settings
+-- .env                   # Environment variables for local
+-- .env.example           # Sample environment variables to get started
+-- .gitignore             # Files to ignore
+-- .nvmrc                 # Node version for nvm/project
+-- .storybook             # Storybook configuration
+-- eslint.config.mjs      # ESLint flat config
+-- prettier.config.js     # Prettier config
+-- tailwind.config.mjs    # Tailwind CSS config
+-- vite.config.ts         # Vite configuration
+-- tsconfig.json          # TypeScript config commons imports both app & node ts configs
+-- app.tsconfig.json      # TypeScript config for react specific for app
+-- node.tsconfig.json     # TypeScript config for node specific for server
+-- components.json        # Shadcn UI components config
+-- package.json           # Dependencies of the project
+-- README.md              # About project
+-- public                 # Static files directly used in html
+-- src                    # Main source code parent folder
+```
+
+## The `src` Directory Structure
+
+All new feature development and business logic resides within the `src` directory.
+
+```
+src/
+├── App.tsx                 # Defines react router routes i.e. page components use
+├── main.tsx                # Main entry of the react app
+├── index.css              # Global css. Generally has Tailwind CSS initialization
+│
+├── assets/                # Static assets (images, icons, fonts)
+├── constants/             # Global constants and enums
+├── types/                 # Global TypeScript types and interfaces
+├── utils/                 # Utility functions and helpers
+│   ├── constants.ts       # Constants, routes, etc.
+│   ├── form.ts            # Form validation helper schemas like zod
+│   ├── logger.ts          # Logging helper functions
+│   ├── react-query-fetcher.ts  # Common fetcher for tanstack/react-query
+│   ├── storage.ts         # Local storage helper functions
+│   ├── store.ts           # Zustand stores used in the code
+│   ├── toast.ts           # Toast helper functions
+│   ├── types.ts           # Commonly used custom types
+│   ├── utils.ts           # Reusable helper functions (includes "cn" utility from Shadcn UI)
+│   └── api.ts             # API related helps using Axios
+├── hooks/                 # Custom React hooks (shared across features)
+├── services/              # API service layer
+├── store/                 # Global state management (Redux/Zustand)
+│   ├── slices/            # Redux slices or Zustand stores
+│   └── store.ts           # Store configuration
+│
+├── components/            # Shared/reusable components
+│   ├── ui/                # shadcn/ui components
+│   ├── layouts/           # Layout components
+│   ├── providers/         # React providers components
+│   └── commons/           # Customised reusable common components
+│
+├── pages/                 # Components for page or next js route. Very minimal component
+│
+├── features/              # **ALL NEW FEATURES GO HERE**
+│   └── user/              # Example: The "User" feature module
+│       ├── components/    # Feature-specific components
+│       │   ├── UserList.tsx
+│       │   ├── UserCard.tsx
+│       │   └── UserForm.tsx
+│       ├── hooks/         # Feature-specific hooks
+│       │   └── useUser.ts
+│       ├── services/       # Feature-specific API services
+│       │   └── userService.ts
+│       ├── store/          # Feature-specific state (if needed)
+│       │   └── userSlice.ts
+│       ├── types/          # Feature-specific types
+│       │   └── user.types.ts
+│       ├── utils/          # Feature-specific utilities
+│       │   └── userUtils.ts
+│       └── pages/          # Feature pages/routes
+│           ├── UserListPage.tsx
+│           └── UserDetailPage.tsx
+│
+├── routes/                # Route configuration
+│   └── index.tsx
+│
+├── i18n/                  # All language/locale translations for internationalization using react-i18next
+│   └── en/                # English translations
+│   └── fr/                # French translations (example)
+│
+├── stories/               # Contains all storybook stories for common components
+│
+└── __tests__/             # Global test utilities and mocks
+    ├── setup.ts
+    └── mocks/
+```
+
+## Core Rules for Code Location
+
+1. **All New Features Belong in `features/`**: Every new feature must be encapsulated within its own directory inside `src/features`. For example, if you are building a "Products" feature, you must create a `src/features/products` directory.
+
+2. **Feature Module Structure**: Within each feature module, organize code by concern:
+   - **Components (`components/`)**: Feature-specific React components
+   - **Hooks (`hooks/`)**: Feature-specific custom hooks
+   - **Services (`services/`)**: API calls and data fetching
+   - **Store (`store/`)**: Feature-specific state management (if needed)
+   - **Types (`types/`)**: TypeScript types and interfaces
+   - **Utils (`utils/`)**: Feature-specific utility functions
+   - **Pages (`pages/`)**: Page-level components (route components)
+
+3. **Shared Components**: Place reusable components that are used across multiple features in `src/components/`.
+
+4. **Global Utilities**: Place utility functions used across the entire application in `src/utils/`.
+
+5. **API Services**: Place API service functions in `src/services/` for global services, or in `features/{feature}/services/` for feature-specific services.
+
+## New Feature Checklist
+
+When creating a new feature (e.g., "Products"), follow these steps:
+
+1. **Create the Feature Directory**:
+   - `mkdir src/features/products`
+
+2. **Create the Core Structure**:
+   - `mkdir src/features/products/{components,hooks,services,types,utils,pages}`
+
+3. **Create Initial Files**:
+   - `touch src/features/products/types/products.types.ts`
+   - `touch src/features/products/services/productsService.ts`
+   - `touch src/features/products/hooks/useProducts.ts`
+   - `touch src/features/products/components/ProductList.tsx`
+   - `touch src/features/products/pages/ProductsPage.tsx`
+
+4. **Add Routes**: Register the new page in `src/routes/index.tsx`
+
+5. **Add Types**: Define TypeScript interfaces in the feature's `types/` directory
+
+## File & Folder Naming Conventions
+
+- Use simple, consistent names. When in doubt, name by type (e.g., `user`, `task`)
+- Use **lowercase with dashes** for directories (e.g., `portfolio-fund`) and files (e.g., `portfolio-fund.tsx`)
+- Component files should use **PascalCase** (e.g., `UserProfile.tsx`) - see `react-components.mdc` for component naming details
+
+## Commit Messages
+
+Follow these conventions for commit messages:
+
+- **Start with an Action Verb**: Use verbs like "Add", "Refactor", "Fix", "Implement", "Update", "Delete"
+- **Be specific**: Clearly state the main change or feature in no more than 15 words
+- **Provide context**: Briefly mention the purpose or impact if needed, keeping the entire message under 120 characters
+
+Examples:
+- ✅ `Add user authentication with JWT tokens`
+- ✅ `Fix login form validation error handling`
+- ✅ `Refactor product list component to use custom hook`
+- ❌ `fix stuff` (too vague)
+- ❌ `Updated the component to fix the bug that was causing issues with the form submission when users tried to submit invalid data` (too long)

@@ -1,0 +1,241 @@
+---
+globs: *.test.tsx,*.spec.tsx,*.test.ts,*.spec.ts
+description: Unit testing conventions for React frontend.
+---
+
+# Frontend Testing Conventions
+
+Defines the standard practice for writing unit tests for React components and frontend code. All new code must be accompanied by tests that adhere to these rules.
+
+## Testing Library
+
+- Use **React Testing Library** for component testing
+- Use **Vitest** or **Jest** as the test runner
+- Use **@testing-library/user-event** for user interactions
+
+## Test File Naming
+
+- Test files should be named `*.test.tsx` or `*.spec.tsx` for components
+- Test files should be named `*.test.ts` or `*.spec.ts` for utilities/hooks
+- Place test files next to the code they test or in a `__tests__` directory
+
+```typescript
+// ✅ Good
+// UserCard.tsx
+// UserCard.test.tsx
+
+// useUser.ts
+// useUser.test.ts
+
+// userUtils.ts
+// userUtils.test.ts
+```
+
+## Component Testing
+
+### Basic Component Test Structure
+
+```typescript
+// ✅ Good - Complete component test
+// UserCard.test.tsx
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { UserCard } from './UserCard';
+import type { User } from '@/features/user/types/user.types';
+
+describe('UserCard', () => {
+  const mockUser: User = {
+    id: '1',
+    name: 'John Doe',
+    email: 'john@example.com',
+    createdAt: '2024-01-01',
+  };
+
+  it('should render user information', () => {
+    render(<UserCard user={mockUser} />);
+    
+    expect(screen.getByText('John Doe')).toBeInTheDocument();
+    expect(screen.getByText('john@example.com')).toBeInTheDocument();
+  });
+
+  it('should call onSelect when clicked', async () => {
+    const user = userEvent.setup();
+    const handleSelect = vi.fn();
+    
+    render(<UserCard user={mockUser} onSelect={handleSelect} />);
+    
+    await user.click(screen.getByRole('button'));
+    
+    expect(handleSelect).toHaveBeenCalledWith(mockUser);
+  });
+});
+```
+
+### Testing User Interactions
+
+```typescript
+// ✅ Good - Testing user interactions
+it('should update input value when user types', async () => {
+  const user = userEvent.setup();
+  const handleChange = vi.fn();
+  
+  render(<UserForm onChange={handleChange} />);
+  
+  const input = screen.getByLabelText('Name');
+  await user.type(input, 'John Doe');
+  
+  expect(input).toHaveValue('John Doe');
+  expect(handleChange).toHaveBeenCalled();
+});
+```
+
+## Hook Testing
+
+### Custom Hook Testing
+
+```typescript
+// ✅ Good - Testing custom hooks
+// useUser.test.ts
+import { renderHook, waitFor } from '@testing-library/react';
+import { useUser } from './useUser';
+import { userService } from '@/services/userService';
+
+vi.mock('@/services/userService');
+
+describe('useUser', () => {
+  it('should fetch and return user data', async () => {
+    const mockUser = { id: '1', name: 'John Doe' };
+    vi.mocked(userService.getById).mockResolvedValue(mockUser);
+
+    const { result } = renderHook(() => useUser('1'));
+
+    expect(result.current.isLoading).toBe(true);
+    expect(result.current.user).toBeNull();
+
+    await waitFor(() => {
+      expect(result.current.isLoading).toBe(false);
+    });
+
+    expect(result.current.user).toEqual(mockUser);
+    expect(userService.getById).toHaveBeenCalledWith('1');
+  });
+});
+```
+
+## Service Testing
+
+### API Service Testing
+
+```typescript
+// ✅ Good - Testing API services
+// userService.test.ts
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { userService } from './userService';
+import apiClient from './apiClient';
+
+vi.mock('./apiClient');
+
+describe('userService', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch all users', async () => {
+    const mockUsers = [{ id: '1', name: 'John' }];
+    vi.mocked(apiClient.get).mockResolvedValue({ data: mockUsers });
+
+    const result = await userService.getAll();
+
+    expect(result).toEqual(mockUsers);
+    expect(apiClient.get).toHaveBeenCalledWith('/users', { params: undefined });
+  });
+
+  it('should handle errors', async () => {
+    const error = new Error('Network error');
+    vi.mocked(apiClient.get).mockRejectedValue(error);
+
+    await expect(userService.getAll()).rejects.toThrow('Network error');
+  });
+});
+```
+
+## Test Organization
+
+### Arrange-Act-Assert Pattern
+
+```typescript
+// ✅ Good - AAA pattern
+it('should display error message when fetch fails', async () => {
+  // Arrange
+  const error = new Error('Failed to fetch');
+  vi.mocked(userService.getById).mockRejectedValue(error);
+
+  // Act
+  render(<UserProfile userId="1" />);
+
+  // Assert
+  await waitFor(() => {
+    expect(screen.getByText(/error/i)).toBeInTheDocument();
+  });
+});
+```
+
+## What NOT to Test
+
+### Avoid Testing Implementation Details
+
+```typescript
+// ❌ Bad - Testing implementation details
+it('should call useState', () => {
+  // Don't test React internals
+});
+
+// ❌ Bad - Testing that a component renders (too trivial)
+it('should render', () => {
+  render(<UserCard user={mockUser} />);
+  // This test adds no value
+});
+
+// ✅ Good - Test user-visible behavior
+it('should display user name and email', () => {
+  render(<UserCard user={mockUser} />);
+  expect(screen.getByText('John Doe')).toBeInTheDocument();
+  expect(screen.getByText('john@example.com')).toBeInTheDocument();
+});
+```
+
+### Focus on User Behavior
+
+- Test what users see and interact with
+- Test error states and loading states
+- Test user interactions (clicks, form submissions)
+- Test accessibility (ARIA labels, keyboard navigation)
+
+## Mocking
+
+### Mock External Dependencies
+
+```typescript
+// ✅ Good - Proper mocking
+vi.mock('@/services/userService', () => ({
+  userService: {
+    getById: vi.fn(),
+    getAll: vi.fn(),
+  },
+}));
+
+// ✅ Good - Mock React Router
+vi.mock('react-router-dom', () => ({
+  useNavigate: () => vi.fn(),
+  useParams: () => ({ id: '1' }),
+}));
+```
+
+## Rules
+
+1. **Test user behavior, not implementation** - Focus on what users see and do
+2. **Use data-testid sparingly** - Prefer accessible queries (getByRole, getByLabelText)
+3. **Keep tests isolated** - Each test should be independent
+4. **Use descriptive test names** - Test names should describe the behavior being tested
+5. **Mock external dependencies** - Mock API calls, router, and third-party libraries
+6. **Test error and loading states** - Don't just test the happy path

@@ -1,0 +1,2 @@
+# This file keeps the database directory in version control
+# Database files (*.db, *.db-journal, *.db-wal, *.db-shm) are ignored
