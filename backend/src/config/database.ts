@@ -13,6 +13,13 @@ import { ReportSelectionCriteria } from '../modules/pim/entities/report-selectio
 import { ReportDisplayField } from '../modules/pim/entities/report-display-field.entity';
 import { PimConfig } from '../modules/pim/entities/pim-config.entity';
 import { TerminationReason } from '../modules/pim/entities/termination-reason.entity';
+import { Claim } from '../modules/claims/entities/claim.entity';
+import { Expense } from '../modules/claims/entities/expense.entity';
+import { Attachment } from '../modules/claims/entities/attachment.entity';
+import { EventType } from '../modules/claims/entities/event-type.entity';
+import { ExpenseType } from '../modules/claims/entities/expense-type.entity';
+import { Currency } from '../modules/claims/entities/currency.entity';
+import { AuditLog } from '../modules/claims/entities/audit-log.entity';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -44,6 +51,13 @@ const dataSourceOptions: DataSourceOptions = {
     ReportDisplayField,
     PimConfig,
     TerminationReason,
+    Claim,
+    Expense,
+    Attachment,
+    EventType,
+    ExpenseType,
+    Currency,
+    AuditLog,
   ],
   migrations: [path.join(__dirname, '../../migration/*.ts')],
   synchronize: false,

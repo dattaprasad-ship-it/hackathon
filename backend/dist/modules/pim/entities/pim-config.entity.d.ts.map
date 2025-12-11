@@ -1,0 +1,1 @@
+{"version":3,"file":"pim-config.entity.d.ts","sourceRoot":"","sources":["../../../../src/modules/pim/entities/pim-config.entity.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,KAAK,EAAE,MAAM,mCAAmC,CAAC;AAE1D,qBACa,SAAU,SAAQ,KAAK;IAElC,oBAAoB,EAAE,OAAO,CAAC;IAG9B,YAAY,EAAE,OAAO,CAAC;IAGtB,YAAY,EAAE,OAAO,CAAC;IAGtB,mBAAmB,EAAE,OAAO,CAAC;CAC9B"}

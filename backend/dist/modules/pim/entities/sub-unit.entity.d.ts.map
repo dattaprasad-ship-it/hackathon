@@ -1,0 +1,1 @@
+{"version":3,"file":"sub-unit.entity.d.ts","sourceRoot":"","sources":["../../../../src/modules/pim/entities/sub-unit.entity.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,KAAK,EAAE,MAAM,mCAAmC,CAAC;AAC1D,OAAO,EAAE,QAAQ,EAAE,MAAM,mBAAmB,CAAC;AAE7C,qBACa,OAAQ,SAAQ,KAAK;IAEhC,IAAI,EAAE,MAAM,CAAC;IAIb,MAAM,CAAC,EAAE,OAAO,CAAC;IAGjB,SAAS,CAAC,EAAE,QAAQ,EAAE,CAAC;CACxB"}

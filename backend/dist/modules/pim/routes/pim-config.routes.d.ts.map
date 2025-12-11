@@ -1,0 +1,1 @@
+{"version":3,"file":"pim-config.routes.d.ts","sourceRoot":"","sources":["../../../../src/modules/pim/routes/pim-config.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAmC,MAAM,SAAS,CAAC;AAClE,OAAO,EAAE,gBAAgB,EAAE,MAAM,gCAAgC,CAAC;AAElE,OAAO,EAAE,cAAc,EAAE,MAAM,mDAAmD,CAAC;AAGnF,eAAO,MAAM,qBAAqB,GAChC,kBAAkB,gBAAgB,EAClC,gBAAgB,cAAc,KAC7B,MA0BF,CAAC"}

@@ -22,7 +22,7 @@ const navItems: NavItem[] = [
   { label: 'Performance', path: '/performance' },
   { label: 'Directory', path: '/directory' },
   { label: 'Maintenance', path: '/maintenance' },
-  { label: 'Claim', path: '/claim' },
+  { label: 'Claims', path: '/claims' },
   { label: 'Buzz', path: '/buzz' },
 ];
 

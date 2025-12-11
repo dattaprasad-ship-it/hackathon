@@ -1,0 +1,1 @@
+{"version":3,"file":"expense-type.entity.d.ts","sourceRoot":"","sources":["../../../../src/modules/claims/entities/expense-type.entity.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,KAAK,EAAE,MAAM,mCAAmC,CAAC;AAE1D,qBAGa,WAAY,SAAQ,KAAK;IAEpC,IAAI,EAAE,MAAM,CAAC;IAGb,WAAW,CAAC,EAAE,MAAM,CAAC;IAGrB,QAAQ,EAAE,OAAO,CAAC;CACnB"}

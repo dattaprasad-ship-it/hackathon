@@ -37,6 +37,25 @@ exports.closeDatabase = exports.initializeDatabase = exports.AppDataSource = voi
 const typeorm_1 = require("typeorm");
 const user_entity_1 = require("../modules/authentication/entities/user.entity");
 const login_attempt_entity_1 = require("../modules/authentication/entities/login-attempt.entity");
+const employee_entity_1 = require("../modules/pim/entities/employee.entity");
+const job_title_entity_1 = require("../modules/pim/entities/job-title.entity");
+const employment_status_entity_1 = require("../modules/pim/entities/employment-status.entity");
+const sub_unit_entity_1 = require("../modules/pim/entities/sub-unit.entity");
+const reporting_method_entity_1 = require("../modules/pim/entities/reporting-method.entity");
+const custom_field_entity_1 = require("../modules/pim/entities/custom-field.entity");
+const employee_custom_value_entity_1 = require("../modules/pim/entities/employee-custom-value.entity");
+const report_entity_1 = require("../modules/pim/entities/report.entity");
+const report_selection_criteria_entity_1 = require("../modules/pim/entities/report-selection-criteria.entity");
+const report_display_field_entity_1 = require("../modules/pim/entities/report-display-field.entity");
+const pim_config_entity_1 = require("../modules/pim/entities/pim-config.entity");
+const termination_reason_entity_1 = require("../modules/pim/entities/termination-reason.entity");
+const claim_entity_1 = require("../modules/claims/entities/claim.entity");
+const expense_entity_1 = require("../modules/claims/entities/expense.entity");
+const attachment_entity_1 = require("../modules/claims/entities/attachment.entity");
+const event_type_entity_1 = require("../modules/claims/entities/event-type.entity");
+const expense_type_entity_1 = require("../modules/claims/entities/expense-type.entity");
+const currency_entity_1 = require("../modules/claims/entities/currency.entity");
+const audit_log_entity_1 = require("../modules/claims/entities/audit-log.entity");
 const dotenv = __importStar(require("dotenv"));
 const fs = __importStar(require("fs"));
 const path = __importStar(require("path"));
@@ -49,7 +68,29 @@ if (!fs.existsSync(dbDirectory)) {
 const dataSourceOptions = {
     type: 'better-sqlite3',
     database: dbPath,
-    entities: [user_entity_1.User, login_attempt_entity_1.LoginAttempt],
+    entities: [
+        user_entity_1.User,
+        login_attempt_entity_1.LoginAttempt,
+        employee_entity_1.Employee,
+        job_title_entity_1.JobTitle,
+        employment_status_entity_1.EmploymentStatus,
+        sub_unit_entity_1.SubUnit,
+        reporting_method_entity_1.ReportingMethod,
+        custom_field_entity_1.CustomField,
+        employee_custom_value_entity_1.EmployeeCustomValue,
+        report_entity_1.Report,
+        report_selection_criteria_entity_1.ReportSelectionCriteria,
+        report_display_field_entity_1.ReportDisplayField,
+        pim_config_entity_1.PimConfig,
+        termination_reason_entity_1.TerminationReason,
+        claim_entity_1.Claim,
+        expense_entity_1.Expense,
+        attachment_entity_1.Attachment,
+        event_type_entity_1.EventType,
+        expense_type_entity_1.ExpenseType,
+        currency_entity_1.Currency,
+        audit_log_entity_1.AuditLog,
+    ],
     migrations: [path.join(__dirname, '../../migration/*.ts')],
     synchronize: false,
     logging: process.env.NODE_ENV === 'development',

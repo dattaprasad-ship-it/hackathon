@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const database_1 = require("./config/database");
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const startServer = async () => {
     try {
         await (0, database_1.initializeDatabase)();

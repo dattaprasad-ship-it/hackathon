@@ -48,6 +48,29 @@ import { createTerminationReasonsRoutes } from './modules/pim/routes/termination
 import { TerminationReason } from './modules/pim/entities/termination-reason.entity';
 import { Repository } from 'typeorm';
 import { IGenericRepository } from './common/base/IGenericRepository';
+import { createClaimsRoutes } from './modules/claims/routes/claims.routes';
+import { createExpensesRoutes } from './modules/claims/routes/expenses.routes';
+import { createAttachmentsRoutes } from './modules/claims/routes/attachments.routes';
+import { createClaimsConfigRoutes } from './modules/claims/routes/claims-config.routes';
+import { ClaimsService } from './modules/claims/services/claims.service';
+import { ExpensesService } from './modules/claims/services/expenses.service';
+import { AttachmentsService } from './modules/claims/services/attachments.service';
+import { ClaimsConfigService } from './modules/claims/services/claims-config.service';
+import { ClaimRepository } from './modules/claims/repositories/claim.repository';
+import { ExpenseRepository } from './modules/claims/repositories/expense.repository';
+import { AttachmentRepository } from './modules/claims/repositories/attachment.repository';
+import { EventTypeRepository } from './modules/claims/repositories/event-type.repository';
+import { ExpenseTypeRepository } from './modules/claims/repositories/expense-type.repository';
+import { CurrencyRepository } from './modules/claims/repositories/currency.repository';
+import { AuditLogRepository } from './modules/claims/repositories/audit-log.repository';
+import { Claim } from './modules/claims/entities/claim.entity';
+import { Expense } from './modules/claims/entities/expense.entity';
+import { Attachment } from './modules/claims/entities/attachment.entity';
+import { EventType } from './modules/claims/entities/event-type.entity';
+import { ExpenseType } from './modules/claims/entities/expense-type.entity';
+import { Currency } from './modules/claims/entities/currency.entity';
+import { AuditLog } from './modules/claims/entities/audit-log.entity';
+import { AuditLogService } from './modules/claims/services/audit-log.service';
 
 export const createApp = (): Express => {
   const app = express();
@@ -148,6 +171,41 @@ export const createApp = (): Express => {
   })(AppDataSource.getRepository(TerminationReason));
   const terminationReasonsRoutes = createTerminationReasonsRoutes(terminationReasonRepository, userRepository);
   app.use('/api/termination-reasons', terminationReasonsRoutes);
+
+  // Claims module routes
+  const claimRepository = new ClaimRepository(AppDataSource.getRepository(Claim));
+  const expenseRepository = new ExpenseRepository(AppDataSource.getRepository(Expense));
+  const attachmentRepository = new AttachmentRepository(AppDataSource.getRepository(Attachment));
+  const eventTypeRepository = new EventTypeRepository(AppDataSource.getRepository(EventType));
+  const expenseTypeRepository = new ExpenseTypeRepository(AppDataSource.getRepository(ExpenseType));
+  const currencyRepository = new CurrencyRepository(AppDataSource.getRepository(Currency));
+  const auditLogRepository = new AuditLogRepository(AppDataSource.getRepository(AuditLog));
+  const auditLogService = new AuditLogService(auditLogRepository);
+
+  const claimsService = new ClaimsService(
+    claimRepository,
+    employeeRepository,
+    eventTypeRepository,
+    currencyRepository,
+    expenseRepository,
+    auditLogService
+  );
+  const expensesService = new ExpensesService(expenseRepository, claimRepository, expenseTypeRepository, auditLogService);
+  const attachmentsService = new AttachmentsService(attachmentRepository, claimRepository, auditLogService);
+  const claimsConfigService = new ClaimsConfigService(eventTypeRepository, expenseTypeRepository, currencyRepository);
+
+  const claimsRoutes = createClaimsRoutes(claimsService, userRepository, claimsConfigService);
+  app.use('/api/claims', claimsRoutes);
+
+  const expensesRoutes = createExpensesRoutes(expensesService, userRepository);
+  app.use('/api/claims', expensesRoutes);
+
+  const attachmentsRoutes = createAttachmentsRoutes(attachmentsService, userRepository);
+  app.use('/api/claims', attachmentsRoutes);
+
+  // Note: Config route is now included in claimsRoutes (before /:id route to avoid route conflicts)
+  // const claimsConfigRoutes = createClaimsConfigRoutes(claimsConfigService, userRepository);
+  // app.use('/api/claims', claimsConfigRoutes);
 
   app.use(errorHandler);
 

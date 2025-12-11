@@ -1,0 +1,1 @@
+{"version":3,"file":"claims-config.routes.d.ts","sourceRoot":"","sources":["../../../../src/modules/claims/routes/claims-config.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAA0B,MAAM,SAAS,CAAC;AACzD,OAAO,EAAE,mBAAmB,EAAE,MAAM,mCAAmC,CAAC;AACxE,OAAO,EAAE,cAAc,EAAE,MAAM,mDAAmD,CAAC;AAGnF,eAAO,MAAM,wBAAwB,GACnC,eAAe,mBAAmB,EAClC,gBAAgB,cAAc,KAC7B,MAkBF,CAAC"}

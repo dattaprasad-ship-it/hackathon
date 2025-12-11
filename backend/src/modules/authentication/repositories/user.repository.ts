@@ -8,9 +8,10 @@ export class UserRepository extends IGenericRepository<User> {
   }
 
   async findByUsername(username: string): Promise<User | null> {
+    // SQLite doesn't support ILike, use exact match for username
     return this.repository.findOne({
       where: {
-        username: ILike(username),
+        username: username,
       } as FindOptionsWhere<User>,
     });
   }

@@ -1,0 +1,1 @@
+{"version":3,"file":"custom-fields.routes.d.ts","sourceRoot":"","sources":["../../../../src/modules/pim/routes/custom-fields.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAmC,MAAM,SAAS,CAAC;AAClE,OAAO,EAAE,mBAAmB,EAAE,MAAM,mCAAmC,CAAC;AAExE,OAAO,EAAE,cAAc,EAAE,MAAM,mDAAmD,CAAC;AAGnF,eAAO,MAAM,wBAAwB,GACnC,qBAAqB,mBAAmB,EACxC,gBAAgB,cAAc,KAC7B,MAyDF,CAAC"}

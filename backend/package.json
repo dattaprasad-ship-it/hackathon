@@ -15,7 +15,11 @@
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/database.ts",
     "seed:pim": "ts-node src/scripts/seed-pim-data.ts",
     "seed:users": "ts-node src/scripts/seed-users.ts",
-    "seed:all": "npm run seed:users && npm run seed:pim",
+    "seed:claims": "ts-node src/scripts/seed-claims-event-types.ts",
+    "seed:employees": "ts-node src/scripts/seed-demo-employees.ts",
+    "seed:claims-demo": "ts-node src/scripts/seed-claims-demo-data.ts",
+    "seed:all": "npm run seed:users && npm run seed:pim && npm run seed:claims",
+    "seed:demo": "npm run seed:users && npm run seed:pim && npm run seed:claims && npm run seed:employees && npm run seed:claims-demo",
     "test:pim": "ts-node src/scripts/test-pim-endpoints.ts"
   },
   "keywords": [],

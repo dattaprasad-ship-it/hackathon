@@ -8,8 +8,7 @@ const createAuthenticationRoutes = (authenticationService, userRepository) => {
     const router = (0, express_1.Router)();
     router.post('/login', authentication_validator_1.loginValidation, authentication_validator_1.validate, async (req, res, next) => {
         try {
-            const ipAddress = (req.ip || req.socket.remoteAddress || 'unknown');
-            const result = await authenticationService.login(req.body, ipAddress);
+            const result = await authenticationService.login(req.body);
             res.status(200).json(result);
         }
         catch (error) {

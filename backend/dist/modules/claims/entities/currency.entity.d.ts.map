@@ -1,0 +1,1 @@
+{"version":3,"file":"currency.entity.d.ts","sourceRoot":"","sources":["../../../../src/modules/claims/entities/currency.entity.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,KAAK,EAAE,MAAM,mCAAmC,CAAC;AAE1D,qBAGa,QAAS,SAAQ,KAAK;IAEjC,IAAI,EAAE,MAAM,CAAC;IAGb,IAAI,EAAE,MAAM,CAAC;IAGb,MAAM,EAAE,MAAM,CAAC;IAGf,QAAQ,EAAE,OAAO,CAAC;CACnB"}

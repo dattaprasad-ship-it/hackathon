@@ -1,0 +1,1 @@
+{"version":3,"file":"reporting-method.entity.d.ts","sourceRoot":"","sources":["../../../../src/modules/pim/entities/reporting-method.entity.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,KAAK,EAAE,MAAM,mCAAmC,CAAC;AAC1D,OAAO,EAAE,QAAQ,EAAE,MAAM,mBAAmB,CAAC;AAE7C,qBACa,eAAgB,SAAQ,KAAK;IAExC,IAAI,EAAE,MAAM,CAAC;IAGb,SAAS,CAAC,EAAE,QAAQ,EAAE,CAAC;CACxB"}

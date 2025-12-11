@@ -13,6 +13,12 @@ import { CustomFieldsPage } from '@/features/pim/pages/CustomFieldsPage';
 import { DataImportPage } from '@/features/pim/pages/DataImportPage';
 import { ReportingMethodsPage } from '@/features/pim/pages/ReportingMethodsPage';
 import { TerminationReasonsPage } from '@/features/pim/pages/TerminationReasonsPage';
+import { ClaimsPage } from '@/features/claims/pages/ClaimsPage';
+import { CreateClaimPage } from '@/features/claims/pages/CreateClaimPage';
+import { ClaimDetailPage } from '@/features/claims/pages/ClaimDetailPage';
+import { MyClaimsPage } from '@/features/claims/pages/MyClaimsPage';
+import { SubmitClaimPage } from '@/features/claims/pages/SubmitClaimPage';
+import { ClaimsConfigPage } from '@/features/claims/pages/ClaimsConfigPage';
 
 export const AppRoutes: React.FC = () => {
   return (
@@ -111,6 +117,54 @@ export const AppRoutes: React.FC = () => {
         element={
           <ProtectedRoute>
             <TerminationReasonsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/claims"
+        element={
+          <ProtectedRoute>
+            <ClaimsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/claims/new"
+        element={
+          <ProtectedRoute>
+            <CreateClaimPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/claims/:id"
+        element={
+          <ProtectedRoute>
+            <ClaimDetailPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/claims/my-claims"
+        element={
+          <ProtectedRoute>
+            <MyClaimsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/claims/submit"
+        element={
+          <ProtectedRoute>
+            <SubmitClaimPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/claims/config"
+        element={
+          <ProtectedRoute>
+            <ClaimsConfigPage />
           </ProtectedRoute>
         }
       />

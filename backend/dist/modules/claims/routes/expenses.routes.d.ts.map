@@ -1,0 +1,1 @@
+{"version":3,"file":"expenses.routes.d.ts","sourceRoot":"","sources":["../../../../src/modules/claims/routes/expenses.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAA0B,MAAM,SAAS,CAAC;AACzD,OAAO,EAAE,eAAe,EAAE,MAAM,8BAA8B,CAAC;AAC/D,OAAO,EAAE,cAAc,EAAE,MAAM,mDAAmD,CAAC;AAmCnF,eAAO,MAAM,oBAAoB,GAC/B,iBAAiB,eAAe,EAChC,gBAAgB,cAAc,KAC7B,MAwEF,CAAC"}
