@@ -30,8 +30,15 @@ apiClient.interceptors.response.use(
   },
   (error) => {
     if (error.response?.status === 401) {
+      // Clear invalid token
       storage.removeToken();
-      window.location.href = '/login';
+      // Only redirect if not already on login page
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
+    } else if (error.code === 'ECONNREFUSED' || error.message?.includes('ECONNREFUSED')) {
+      // Handle backend connection errors gracefully
+      console.warn('Backend API is not available. Please ensure the backend server is running.');
     }
     return Promise.reject(error);
   }

@@ -46,10 +46,16 @@ export const EmployeeList: React.FC = () => {
     navigate(`/pim/employees/${id}/edit`);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (window.confirm('Are you sure you want to delete this employee?')) {
-      // TODO: Implement delete functionality
-      console.log('Delete employee:', id);
+      try {
+        const { employeesService } = await import('../services/employeesService');
+        await employeesService.delete(id);
+        refresh();
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error?.message || error.message || 'Failed to delete employee';
+        alert(errorMessage);
+      }
     }
   };
 

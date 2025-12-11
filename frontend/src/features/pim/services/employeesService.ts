@@ -13,8 +13,12 @@ export const employeesService = {
   list: async (filters: EmployeeListFilters = {}): Promise<EmployeeListResponse> => {
     const params = new URLSearchParams();
     
-    if (filters.employeeName) params.append('employeeName', filters.employeeName);
-    if (filters.employeeId) params.append('employeeId', filters.employeeId);
+    if (filters.employeeName && filters.employeeName.trim()) {
+      params.append('employeeName', filters.employeeName.trim());
+    }
+    if (filters.employeeId && filters.employeeId.trim()) {
+      params.append('employeeId', filters.employeeId.trim());
+    }
     if (filters.employmentStatusId) params.append('employmentStatusId', filters.employmentStatusId);
     if (filters.jobTitleId) params.append('jobTitleId', filters.jobTitleId);
     if (filters.subUnitId) params.append('subUnitId', filters.subUnitId);

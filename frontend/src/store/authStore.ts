@@ -50,13 +50,15 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   initialize: () => {
+    // Don't auto-authenticate on initialization
+    // User must explicitly log in during this session to be authenticated
+    // Authentication requires BOTH token AND user to be present
     const storedToken = storage.getToken();
-    if (storedToken) {
-      set({
-        token: storedToken,
-        isAuthenticated: true,
-      });
-    }
+    set({
+      token: storedToken || null,
+      isAuthenticated: false, // Always start as unauthenticated, require explicit login
+      user: null,
+    });
   },
 }));
 

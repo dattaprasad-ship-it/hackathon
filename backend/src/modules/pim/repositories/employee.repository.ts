@@ -69,10 +69,11 @@ export class EmployeeRepository extends IGenericRepository<Employee> {
       queryBuilder.where('employee.isDeleted = :isDeleted', { isDeleted: false });
     }
 
-    if (employeeName) {
+    if (employeeName && employeeName.trim()) {
+      const searchPattern = `%${employeeName.trim()}%`;
       queryBuilder.andWhere(
-        '(employee.firstName LIKE :name OR employee.middleName LIKE :name OR employee.lastName LIKE :name OR CONCAT(employee.firstName, " ", COALESCE(employee.middleName, ""), " ", employee.lastName) LIKE :name)',
-        { name: `%${employeeName}%` }
+        '(employee.firstName LIKE :name OR employee.middleName LIKE :name OR employee.lastName LIKE :name OR (employee.firstName || \' \' || COALESCE(employee.middleName, \'\') || \' \' || employee.lastName) LIKE :name)',
+        { name: searchPattern }
       );
     }
 

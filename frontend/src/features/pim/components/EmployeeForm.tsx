@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import type { CreateEmployeeRequest } from '../types/employees.types';
+import type { CreateEmployeeRequest, UpdateEmployeeRequest } from '../types/employees.types';
 
 const employeeSchema = z
   .object({
@@ -44,8 +44,8 @@ const employeeSchema = z
   );
 
 interface EmployeeFormProps {
-  initialData?: Partial<CreateEmployeeRequest>;
-  onSubmit: (data: CreateEmployeeRequest) => Promise<void>;
+  initialData?: Partial<CreateEmployeeRequest | UpdateEmployeeRequest>;
+  onSubmit: (data: CreateEmployeeRequest | UpdateEmployeeRequest) => Promise<void>;
   onCancel: () => void;
   loading?: boolean;
 }
@@ -65,14 +65,14 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<CreateEmployeeRequest>({
+  } = useForm<CreateEmployeeRequest | UpdateEmployeeRequest>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       employeeId: initialData?.employeeId || '',
       firstName: initialData?.firstName || '',
       middleName: initialData?.middleName || '',
       lastName: initialData?.lastName || '',
-      createLoginDetails: initialData?.createLoginDetails || false,
+      createLoginDetails: (initialData as any)?.createLoginDetails || false,
       username: initialData?.username || '',
       loginStatus: initialData?.loginStatus || 'Enabled',
     },
@@ -84,7 +84,7 @@ export const EmployeeForm: React.FC<EmployeeFormProps> = ({
     setCreateLoginDetails(watchedCreateLogin || false);
   }, [watchedCreateLogin]);
 
-  const onFormSubmit = async (data: CreateEmployeeRequest) => {
+  const onFormSubmit = async (data: CreateEmployeeRequest | UpdateEmployeeRequest) => {
     await onSubmit(data);
   };
 
