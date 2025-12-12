@@ -1,1 +1,0 @@
-{"version":3,"file":"dashboard.routes.d.ts","sourceRoot":"","sources":["../../../../src/modules/dashboard/routes/dashboard.routes.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAmC,MAAM,SAAS,CAAC;AAClE,OAAO,EAAE,gBAAgB,EAAE,MAAM,+BAA+B,CAAC;AAEjE,OAAO,EAAE,cAAc,EAAE,MAAM,mDAAmD,CAAC;AAKnF,eAAO,MAAM,qBAAqB,GAChC,kBAAkB,gBAAgB,EAClC,gBAAgB,cAAc,KAC7B,MAoJF,CAAC"}

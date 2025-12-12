@@ -14,7 +14,6 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Dashboard', path: '/dashboard' },
   { label: 'Admin', path: '/admin' },
-  { label: 'PIM', path: '/pim' },
   { label: 'Leave', path: '/leave' },
   { label: 'Time', path: '/time' },
   { label: 'Recruitment', path: '/recruitment' },

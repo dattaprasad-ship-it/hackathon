@@ -97,7 +97,6 @@ describe('dashboardStore', () => {
       const { setActiveRoute } = useDashboardStore.getState();
 
       setActiveRoute('/leave');
-      setActiveRoute('/pim');
       setActiveRoute('/dashboard');
 
       const newState = useDashboardStore.getState();
