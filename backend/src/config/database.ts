@@ -1,18 +1,6 @@
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { User } from '../modules/authentication/entities/user.entity';
 import { LoginAttempt } from '../modules/authentication/entities/login-attempt.entity';
-import { Employee } from '../modules/pim/entities/employee.entity';
-import { JobTitle } from '../modules/pim/entities/job-title.entity';
-import { EmploymentStatus } from '../modules/pim/entities/employment-status.entity';
-import { SubUnit } from '../modules/pim/entities/sub-unit.entity';
-import { ReportingMethod } from '../modules/pim/entities/reporting-method.entity';
-import { CustomField } from '../modules/pim/entities/custom-field.entity';
-import { EmployeeCustomValue } from '../modules/pim/entities/employee-custom-value.entity';
-import { Report } from '../modules/pim/entities/report.entity';
-import { ReportSelectionCriteria } from '../modules/pim/entities/report-selection-criteria.entity';
-import { ReportDisplayField } from '../modules/pim/entities/report-display-field.entity';
-import { PimConfig } from '../modules/pim/entities/pim-config.entity';
-import { TerminationReason } from '../modules/pim/entities/termination-reason.entity';
 import * as dotenv from 'dotenv';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -32,18 +20,6 @@ const dataSourceOptions: DataSourceOptions = {
   entities: [
     User,
     LoginAttempt,
-    Employee,
-    JobTitle,
-    EmploymentStatus,
-    SubUnit,
-    ReportingMethod,
-    CustomField,
-    EmployeeCustomValue,
-    Report,
-    ReportSelectionCriteria,
-    ReportDisplayField,
-    PimConfig,
-    TerminationReason,
   ],
   migrations: [path.join(__dirname, '../../migration/*.ts')],
   synchronize: false,

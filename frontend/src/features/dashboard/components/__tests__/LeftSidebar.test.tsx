@@ -43,7 +43,6 @@ describe('LeftSidebar', () => {
     renderWithRouter(<LeftSidebar />);
     expect(screen.getByText(/dashboard/i)).toBeInTheDocument();
     expect(screen.getByText(/admin/i)).toBeInTheDocument();
-    expect(screen.getByText(/pim/i)).toBeInTheDocument();
     expect(screen.getByText(/leave/i)).toBeInTheDocument();
   });
 

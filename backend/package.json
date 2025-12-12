@@ -1,7 +1,7 @@
 {
-  "name": "hr-management-backend",
+  "name": "sdd-backend",
   "version": "1.0.0",
-  "description": "HR Management System Backend API",
+  "description": "SDD Backend API",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
@@ -13,10 +13,8 @@
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/config/database.ts",
     "migration:run": "typeorm-ts-node-commonjs migration:run -d src/config/database.ts",
     "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/config/database.ts",
-    "seed:pim": "ts-node src/scripts/seed-pim-data.ts",
     "seed:users": "ts-node src/scripts/seed-users.ts",
-    "seed:all": "npm run seed:users && npm run seed:pim",
-    "test:pim": "ts-node src/scripts/test-pim-endpoints.ts"
+    "seed:all": "npm run seed:users"
   },
   "keywords": [],
   "author": "",

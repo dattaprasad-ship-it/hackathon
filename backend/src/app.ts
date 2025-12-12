@@ -15,39 +15,6 @@ import { MyActionsService } from './modules/dashboard/services/my-actions.servic
 import { EmployeesOnLeaveService } from './modules/dashboard/services/employees-on-leave.service';
 import { EmployeeDistributionService } from './modules/dashboard/services/employee-distribution.service';
 import { BuzzPostsService } from './modules/dashboard/services/buzz-posts.service';
-import { createEmployeesRoutes } from './modules/pim/routes/employees.routes';
-import { EmployeesService } from './modules/pim/services/employees.service';
-import { EmployeeRepository } from './modules/pim/repositories/employee.repository';
-import {
-  JobTitleRepository,
-  EmploymentStatusRepository,
-  SubUnitRepository,
-  ReportingMethodRepository,
-} from './modules/pim/repositories/lookup.repository';
-import { Employee } from './modules/pim/entities/employee.entity';
-import { JobTitle } from './modules/pim/entities/job-title.entity';
-import { EmploymentStatus } from './modules/pim/entities/employment-status.entity';
-import { SubUnit } from './modules/pim/entities/sub-unit.entity';
-import { ReportingMethod } from './modules/pim/entities/reporting-method.entity';
-import { Report } from './modules/pim/entities/report.entity';
-import { CustomField } from './modules/pim/entities/custom-field.entity';
-import { PimConfig } from './modules/pim/entities/pim-config.entity';
-import { createReportsRoutes } from './modules/pim/routes/reports.routes';
-import { ReportsService } from './modules/pim/services/reports.service';
-import { ReportRepository } from './modules/pim/repositories/report.repository';
-import { createCustomFieldsRoutes } from './modules/pim/routes/custom-fields.routes';
-import { CustomFieldsService } from './modules/pim/services/custom-fields.service';
-import { CustomFieldRepository } from './modules/pim/repositories/custom-field.repository';
-import { createPimConfigRoutes } from './modules/pim/routes/pim-config.routes';
-import { PimConfigService } from './modules/pim/services/pim-config.service';
-import { PimConfigRepository } from './modules/pim/repositories/pim-config.repository';
-import { createDataImportRoutes } from './modules/pim/routes/data-import.routes';
-import { DataImportService } from './modules/pim/services/data-import.service';
-import { createReportingMethodsRoutes } from './modules/pim/routes/reporting-methods.routes';
-import { createTerminationReasonsRoutes } from './modules/pim/routes/termination-reasons.routes';
-import { TerminationReason } from './modules/pim/entities/termination-reason.entity';
-import { Repository } from 'typeorm';
-import { IGenericRepository } from './common/base/IGenericRepository';
 
 export const createApp = (): Express => {
   const app = express();
@@ -97,57 +64,6 @@ export const createApp = (): Express => {
 
   const dashboardRoutes = createDashboardRoutes(dashboardService, userRepository);
   app.use('/api/dashboard', dashboardRoutes);
-
-  const employeeRepository = new EmployeeRepository(AppDataSource.getRepository(Employee));
-  const jobTitleRepository = new JobTitleRepository(AppDataSource.getRepository(JobTitle));
-  const employmentStatusRepository = new EmploymentStatusRepository(
-    AppDataSource.getRepository(EmploymentStatus)
-  );
-  const subUnitRepository = new SubUnitRepository(AppDataSource.getRepository(SubUnit));
-  const reportingMethodRepository = new ReportingMethodRepository(
-    AppDataSource.getRepository(ReportingMethod)
-  );
-
-  const employeesService = new EmployeesService(
-    employeeRepository,
-    jobTitleRepository,
-    employmentStatusRepository,
-    subUnitRepository,
-    reportingMethodRepository
-  );
-
-  const employeesRoutes = createEmployeesRoutes(employeesService, userRepository);
-  app.use('/api/employees', employeesRoutes);
-
-  const reportRepository = new ReportRepository(AppDataSource.getRepository(Report));
-  const reportsService = new ReportsService(reportRepository, employeeRepository);
-  const reportsRoutes = createReportsRoutes(reportsService, userRepository);
-  app.use('/api/reports', reportsRoutes);
-
-  const customFieldRepository = new CustomFieldRepository(AppDataSource.getRepository(CustomField));
-  const customFieldsService = new CustomFieldsService(customFieldRepository);
-  const customFieldsRoutes = createCustomFieldsRoutes(customFieldsService, userRepository);
-  app.use('/api/custom-fields', customFieldsRoutes);
-
-  const pimConfigRepository = new PimConfigRepository(AppDataSource.getRepository(PimConfig));
-  const pimConfigService = new PimConfigService(pimConfigRepository);
-  const pimConfigRoutes = createPimConfigRoutes(pimConfigService, userRepository);
-  app.use('/api/pim/config', pimConfigRoutes);
-
-  const dataImportService = new DataImportService(employeeRepository);
-  const dataImportRoutes = createDataImportRoutes(dataImportService, userRepository);
-  app.use('/api/pim/import', dataImportRoutes);
-
-  const reportingMethodsRoutes = createReportingMethodsRoutes(reportingMethodRepository, userRepository);
-  app.use('/api/reporting-methods', reportingMethodsRoutes);
-
-  const terminationReasonRepository = new (class extends IGenericRepository<TerminationReason> {
-    constructor(repository: Repository<TerminationReason>) {
-      super(repository);
-    }
-  })(AppDataSource.getRepository(TerminationReason));
-  const terminationReasonsRoutes = createTerminationReasonsRoutes(terminationReasonRepository, userRepository);
-  app.use('/api/termination-reasons', terminationReasonsRoutes);
 
   app.use(errorHandler);
 
