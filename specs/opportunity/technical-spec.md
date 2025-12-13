@@ -84,7 +84,6 @@ OpportunitiesModule
 │   ├── OpportunityDetailHeader
 │   ├── OpportunityForm (view/edit)
 │   ├── RelationshipsSection
-│   ├── RelationshipSubPanel
 │   └── InsightsPanel
 ├── CreateOpportunityPage
 │   └── OpportunityForm (create)
@@ -146,11 +145,11 @@ Routes Layer
     - `salesStage` (string[]): Sales stage filter (array of values)
     - `assignedTo` (string): Assigned user ID
     - `amount` (object): Amount filter with operators
-      - `operator` ("gt", "gte", "lt", "lte", "eq")
-      - `value` (number)
+      - `operator` ("eq", "gt", "lt", "between"): Equals, Greater Than, Less Than, Between
+      - `value` (number | number[]): Single value for eq/gt/lt, array of [min, max] for between
     - `expectedCloseDate` (object): Date filter
-      - `operator` ("before", "after", "between")
-      - `value` (string): Date value(s)
+      - `operator` ("eq", "gt", "lt", "between"): Equals, Greater Than, Less Than, Between
+      - `value` (string | string[]): Single date (ISO format) for eq/gt/lt, array of [start, end] dates for between
     - `quickFilters` (object):
       - `myItems` (boolean): Show only assigned to current user
       - `openItems` (boolean): Exclude closed stages
@@ -247,15 +246,15 @@ Routes Layer
 - **Status Codes**: 200 OK, 207 Multi-Status (partial success)
 
 **POST /api/opportunities/export**
-- **Description**: Export opportunities to file
+- **Description**: Export opportunities to CSV file
 - **Request Body**:
   ```typescript
   {
     opportunityIds?: string[],  // Optional, if empty exports all accessible
-    format: "csv" | "excel" | "pdf",
     columns?: string[]          // Optional, specifies which columns
   }
   ```
+- **Response**: CSV file download
 - **Response**: File download (binary)
 - **Status Codes**: 200 OK, 401 Unauthorized
 
@@ -301,9 +300,8 @@ Routes Layer
 #### Import Operations
 
 **GET /api/opportunities/import/template**
-- **Description**: Download import template file
-- **Query Parameters**: `format` ("csv" | "excel")
-- **Response**: Template file download
+- **Description**: Download import template file (CSV format)
+- **Response**: CSV template file download
 - **Status Codes**: 200 OK
 
 **POST /api/opportunities/import/upload**
@@ -1320,6 +1318,16 @@ interface ErrorResponse {
 - Q: How should search functionality work in lookup modals (Assigned To, Account Name, Campaign)? → A: Search input field with Search button - Display search box, user clicks Search button to filter results
 
 - Q: When should form validation check if a field is "filled" versus "valid" for enabling the Save button? → A: Check if filled AND valid - Save button enables only when all required fields are filled AND pass validation rules
+
+- Q: How should users move columns between DISPLAYED and HIDDEN sections in the Choose Columns modal? → A: Drag-and-drop - Users drag column tags/badges between sections
+
+- Q: What filter operators should be available for the Opportunity Amount and Expected Close Date filter fields? → A: Standard operators: Equals, Greater Than, Less Than, Between (for both amount and date)
+
+- Q: What file format(s) should the bulk Export operation support? → A: CSV only - Simple, universal format
+
+- Q: What should happen when a user clicks a relationship item (e.g., "CONTACTS: 3") in the Relationships section? → A: Navigate to related records list - Navigate to a full-page list view showing all related records (e.g., `/opportunities/:id/contacts`)
+
+- Q: What should be the maximum number of opportunities that can be selected for bulk operations (Delete, Export, Merge, Mass Update)? → A: No limit - All opportunities matching current filter can be selected (system processes in batches with progress indicators for large selections)
 
 ---
 
