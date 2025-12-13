@@ -121,15 +121,15 @@ As a sales representative, I want to view and manage relationships (contacts, ac
 
 **Why this priority**: Opportunities don't exist in isolation - they're connected to contacts, activities, documents, and other entities. Viewing these relationships provides context and helps users understand the full picture of each opportunity. This is important for effective opportunity management.
 
-**Independent Test**: Can be fully tested by navigating to an opportunity detail page, expanding the Relationships section, clicking on a relationship item (e.g., "CONTACTS: 3"), and verifying the sub-panel displays related records. This delivers value by providing comprehensive opportunity context.
+**Independent Test**: Can be fully tested by navigating to an opportunity detail page, expanding the Relationships section, clicking on a relationship item (e.g., "CONTACTS: 3"), and verifying navigation to a full-page list view displaying related records. This delivers value by providing comprehensive opportunity context.
 
 **Acceptance Scenarios**:
 
 1. **Given** a user is on an opportunity detail page, **When** they expand the Relationships section, **Then** they see a grid showing relationship types (Activities, Contacts, Documents, Quotes, Projects, etc.) with counts
-2. **Given** a user expands Relationships section, **When** they click on "CONTACTS: 3", **Then** a Contacts sub-panel opens below displaying a table with 3 related contacts
-3. **Given** a Contacts sub-panel is open, **When** they view the table, **Then** they see columns: Name, Account Name, Role, Email, Office Phone with sortable headers
-4. **Given** a Contacts sub-panel is open, **When** they click the Actions dropdown and select Create, **Then** they are navigated to the Create Contact page
-5. **Given** a user views the Activities sub-panel, **When** the panel displays, **Then** they see a table with columns: Subject, Status, Contact, Due Date, Assigned User
+2. **Given** a user expands Relationships section, **When** they click on "CONTACTS: 3", **Then** they are navigated to a full-page list view (e.g., `/opportunities/:id/contacts`) displaying all 3 related contacts
+3. **Given** a user is on a related records list page (e.g., Contacts list for opportunity), **When** they view the table, **Then** they see columns: Name, Account Name, Role, Email, Office Phone with sortable headers
+4. **Given** a user is on a related records list page, **When** they click the Actions dropdown and select Create, **Then** they are navigated to the Create Contact page
+5. **Given** a user clicks on "ACTIVITIES: 5" in Relationships section, **When** they navigate to the Activities list page, **Then** they see a table with columns: Subject, Status, Contact, Due Date, Assigned User
 
 ---
 
@@ -139,14 +139,14 @@ As a user, I want to customize which columns are visible in the opportunities ta
 
 **Why this priority**: Column customization is a quality-of-life feature that allows users to personalize their view. While not critical for core functionality, it improves user experience by allowing users to tailor the interface to their needs and workflows.
 
-**Independent Test**: Can be fully tested by clicking the Columns icon, moving columns between DISPLAYED and HIDDEN sections, clicking Save Changes, and verifying the table displays only selected columns. This delivers value by allowing personalized views.
+**Independent Test**: Can be fully tested by clicking the Columns icon, dragging columns between DISPLAYED and HIDDEN sections, clicking Save Changes, and verifying the table displays only selected columns. This delivers value by allowing personalized views.
 
 **Acceptance Scenarios**:
 
 1. **Given** a user is on the opportunities list page, **When** they click the Columns icon, **Then** the "Choose Columns" modal opens with two sections: DISPLAYED (left) and HIDDEN (right)
 2. **Given** the Choose Columns modal is open, **When** they view the DISPLAYED section, **Then** they see currently visible columns as tags/badges (Name, Account Name, Sales Stage, Amount, Close, User, Date Created)
-3. **Given** the Choose Columns modal is open, **When** they move a column from DISPLAYED to HIDDEN, **Then** that column is removed from the table after saving
-4. **Given** the Choose Columns modal is open, **When** they move a column from HIDDEN to DISPLAYED, **Then** that column appears in the table after saving
+3. **Given** the Choose Columns modal is open, **When** they drag a column tag from DISPLAYED to HIDDEN section, **Then** that column is removed from the table after saving
+4. **Given** the Choose Columns modal is open, **When** they drag a column tag from HIDDEN to DISPLAYED section, **Then** that column appears in the table after saving
 5. **Given** a user has customized columns, **When** they return to the opportunities list page later, **Then** their column preferences are maintained and displayed
 
 ---
@@ -189,7 +189,7 @@ As a user, I want to quickly access recently viewed opportunities from the navig
   - System should identify and report errors during Step 2 or Step 3, display error details in Step 5 results, and allow user to correct and re-import
 
 - What happens when a user selects a very large number of opportunities for bulk operations (e.g., 1000+ records)?
-  - System should either limit selection size, warn the user about performance, or process operations in batches with progress indicators
+  - System allows selection of all opportunities matching current filter (no hard limit). System processes operations in batches with progress indicators for large selections to ensure good performance and user feedback
 
 - What happens when lookup modal fails to load records (e.g., API error)?
   - System should display an error message in the modal, provide a retry button, and allow user to close modal and manually enter value if needed
@@ -203,8 +203,8 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 - What happens when sales stage dropdown or other lookup fields have no available options?
   - System should display appropriate empty state message and prevent form submission if required field cannot be populated
 
-- What happens when relationship sub-panel contains a very large number of related records?
-  - System should implement pagination within the sub-panel to limit displayed records and provide navigation controls
+- What happens when related records list page contains a very large number of related records?
+  - System should implement pagination within the list page to limit displayed records and provide navigation controls
 
 - What happens when user's authentication expires while performing a long operation (e.g., import)?
   - System should detect authentication expiration, save operation state if possible, redirect to login, and restore state after re-authentication
@@ -246,7 +246,7 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 #### Filtering and Search
 
 - **FR-020**: System MUST provide Filter button that opens Basic Filter panel
-- **FR-021**: System MUST display Basic Filter panel with filter fields: Opportunity Name (text), Account Name (dropdown), Opportunity Amount (operator + number), Assigned To (dropdown), Sales Stage (dropdown), Lead Source (dropdown), Expected Close Date (operator + date), Next Step (text)
+- **FR-021**: System MUST display Basic Filter panel with filter fields: Opportunity Name (text), Account Name (dropdown), Opportunity Amount (operator dropdown: Equals, Greater Than, Less Than, Between + number input), Assigned To (dropdown), Sales Stage (dropdown), Lead Source (dropdown), Expected Close Date (operator dropdown: Equals, Greater Than, Less Than, Between + date picker), Next Step (text)
 - **FR-022**: System MUST provide quick filter checkboxes: My Items, Open Items, My Favorites
 - **FR-023**: System MUST apply filters when Search button is clicked and update table to show only matching opportunities
 - **FR-024**: System MUST clear all filter criteria when Clear button is clicked
@@ -257,7 +257,7 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 
 - **FR-030**: System MUST provide Columns icon that opens "Choose Columns" modal
 - **FR-031**: System MUST display Choose Columns modal with two sections: DISPLAYED (left) and HIDDEN (right)
-- **FR-032**: System MUST allow moving columns between DISPLAYED and HIDDEN sections
+- **FR-032**: System MUST allow moving columns between DISPLAYED and HIDDEN sections using drag-and-drop (users drag column tags/badges between sections)
 - **FR-033**: System MUST save column preferences per user when Save Changes is clicked
 - **FR-034**: System MUST persist and restore user's column preferences across browser sessions
 
@@ -284,8 +284,8 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 - **FR-062**: System MUST display BASIC tab with all opportunity fields in two-column layout
 - **FR-063**: System MUST display OTHER tab with read-only metadata fields: Date Modified, Date Created
 - **FR-064**: System MUST display Relationships section with expandable/collapsible grid showing relationship types with counts
-- **FR-065**: System MUST open relationship sub-panel when relationship item is clicked (e.g., "CONTACTS: 3")
-- **FR-066**: System MUST display relationship sub-panel with table of related records, sortable columns, pagination, and Actions dropdown
+- **FR-065**: System MUST navigate to full-page list view when relationship item is clicked (e.g., "CONTACTS: 3" navigates to `/opportunities/:id/contacts`)
+- **FR-066**: System MUST display related records list page with table of related records, sortable columns, pagination, and Actions dropdown
 - **FR-067**: System MUST display Insights panel on right side showing days at current sales stage metric
 - **FR-068**: System MUST display Timeline panel on right side showing chronological list of activities and updates
 - **FR-069**: System MUST provide navigation arrows (<, >) to browse between opportunity records without returning to list
@@ -326,7 +326,7 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 
 - **FR-120**: System MUST enable Bulk Action dropdown when one or more opportunities are selected
 - **FR-121**: System MUST provide Delete bulk action with confirmation dialog before execution
-- **FR-122**: System MUST provide Export bulk action that downloads export file with selected opportunity data
+- **FR-122**: System MUST provide Export bulk action that downloads CSV file with selected opportunity data
 - **FR-123**: System MUST provide Merge bulk action that combines selected opportunities into one
 - **FR-124**: System MUST provide Mass Update bulk action that allows updating common fields for all selected opportunities
 - **FR-125**: System MUST display confirmation dialogs for destructive bulk operations (Delete, Merge)
@@ -370,7 +370,7 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 #### Performance and UX
 
 - **FR-170**: System MUST display loading indicators for async operations (API requests, import processing, bulk operations)
-- **FR-171**: System MUST lazy load relationship sub-panels (load data only when sub-panel is opened)
+- **FR-171**: System MUST lazy load related records list page data (load data only when page is navigated to)
 - **FR-172**: System MUST debounce search/filter inputs with 300ms delay to reduce unnecessary API calls
 - **FR-173**: System MUST optimize table rendering for large datasets using pagination
 - **FR-174**: System MUST provide visual feedback for user actions (hover states, active states, transitions)
@@ -398,14 +398,14 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 - **SC-006**: Form validation errors display within 100ms of field blur or form submission attempt
 - **SC-007**: Opportunity creation completes and navigates to detail page within 3 seconds of Save click
 - **SC-008**: Opportunity update saves and returns to view mode within 2 seconds of Save click
-- **SC-009**: Bulk operations (delete, export, mass update) complete successfully for up to 1000 selected records
+- **SC-009**: Bulk operations (delete, export, mass update) complete successfully for all selected records (no hard limit on selection count)
 - **SC-010**: Import process handles files up to 10MB and completes within 30 seconds for typical files
 - **SC-011**: Column preferences save and persist across browser sessions 100% of the time
 - **SC-012**: Filter preferences maintain state during user session 100% of the time
 - **SC-013**: All dropdown fields populate with values from backend API 100% of the time
 - **SC-014**: Lookup modals display accurate data with pagination functioning correctly 100% of the time
 - **SC-015**: Recently Viewed list displays correctly with most recent opportunities first, up to limit
-- **SC-016**: Relationship sub-panels load and display related records correctly 100% of the time
+- **SC-016**: Related records list pages load and display related records correctly 100% of the time
 - **SC-017**: Quick Charts panel displays accurate pipeline data based on current filters 100% of the time
 - **SC-018**: Insights panel calculates and displays days at current sales stage accurately
 - **SC-019**: All functional requirements are implemented and tested - 100% requirement coverage in test suite
@@ -433,6 +433,16 @@ As a user, I want to quickly access recently viewed opportunities from the navig
 - Q: How should search functionality work in lookup modals (Assigned To, Account Name, Campaign)? → A: Search input field with Search button - Display search box, user clicks Search button to filter results
 
 - Q: When should form validation check if a field is "filled" versus "valid" for enabling the Save button? → A: Check if filled AND valid - Save button enables only when all required fields are filled AND pass validation rules
+
+- Q: How should users move columns between DISPLAYED and HIDDEN sections in the Choose Columns modal? → A: Drag-and-drop - Users drag column tags/badges between sections
+
+- Q: What filter operators should be available for the Opportunity Amount and Expected Close Date filter fields? → A: Standard operators: Equals, Greater Than, Less Than, Between (for both amount and date)
+
+- Q: What file format(s) should the bulk Export operation support? → A: CSV only - Simple, universal format
+
+- Q: What should happen when a user clicks a relationship item (e.g., "CONTACTS: 3") in the Relationships section? → A: Navigate to related records list - Navigate to a full-page list view showing all related records (e.g., `/opportunities/:id/contacts`)
+
+- Q: What should be the maximum number of opportunities that can be selected for bulk operations (Delete, Export, Merge, Mass Update)? → A: No limit - All opportunities matching current filter can be selected (system processes in batches with progress indicators for large selections)
 
 ---
 

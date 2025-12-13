@@ -37,7 +37,7 @@ As a sales manager, I want to view a list of opportunities with filtering, sorti
 
 1. **Given** a user navigates to Opportunities list page, **When** the page loads, **Then** they see a table displaying opportunities with columns: Checkbox, Context Menu (three dots), Name, Account Name, Sales Stage, Amount, Close Date, User, Date Created, and Row Actions (Phone, Calendar, Task, Email, View icons)
 2. **Given** a user is on the opportunities list page, **When** they click a column header, **Then** the table sorts by that column (descending → ascending → normal cycle) with visual indicator showing sort direction (highlighted sort icon when active)
-3. **Given** a user clicks the Filter button, **When** the filter panel opens, **Then** they can filter by Opportunity Name, Account Name, Amount, Sales Stage, Assigned To, Lead Source, Expected Close Date, and Next Step
+3. **Given** a user clicks the Filter button, **When** the filter panel opens, **Then** they can filter by Opportunity Name, Account Name, Amount (with operators: Equals, Greater Than, Less Than, Between), Sales Stage, Assigned To, Lead Source, Expected Close Date (with operators: Equals, Greater Than, Less Than, Between), and Next Step
 4. **Given** a user applies multiple filters, **When** filters are applied, **Then** the system combines filters with AND logic and displays matching opportunities
 5. **Given** a user is on the opportunities list page, **When** the page loads, **Then** the Quick Charts panel displays by default showing Pipeline By Sales Stage bar chart on the right side with colored bars representing different sales stages and a legend mapping colors to stages
 6. **Given** a user clicks the Insights button, **When** clicked, **Then** the Quick Charts panel hides and the table columns expand to use the additional space
@@ -99,7 +99,7 @@ As a sales manager, I want to perform bulk operations (delete, export, merge, ma
 
 1. **Given** a user selects multiple opportunities using checkboxes, **When** they select opportunities, **Then** the Bulk Action dropdown becomes enabled showing options: Delete, Export, Merge, Mass Update
 2. **Given** a user selects Delete from Bulk Action dropdown, **When** they confirm deletion, **Then** selected opportunities are deleted and removed from the list
-3. **Given** a user selects Export from Bulk Action dropdown, **When** they select export format, **Then** an export file downloads containing selected opportunities data
+3. **Given** a user selects Export from Bulk Action dropdown, **When** they click Export, **Then** a CSV file downloads containing selected opportunities data
 4. **Given** a user selects Merge from Bulk Action dropdown, **When** they specify source and target opportunities, **Then** source opportunities are merged into target, relationships transferred, and sources deleted
 5. **Given** a user selects Mass Update from Bulk Action dropdown, **When** they specify update fields and values, **Then** all selected opportunities are updated with the specified changes
 
@@ -111,17 +111,17 @@ As a sales representative, I want to view related records (contacts, activities,
 
 **Why this priority**: Opportunities don't exist in isolation - they're connected to contacts, activities, documents, and other entities. Viewing these relationships provides context and helps users understand the full picture of each opportunity. This is important for effective opportunity management.
 
-**Independent Test**: Can be fully tested by navigating to an opportunity detail page, expanding the Relationships section, clicking on a relationship type (e.g., Contacts), and verifying the sub-panel displays related records. This delivers value by providing comprehensive opportunity context.
+**Independent Test**: Can be fully tested by navigating to an opportunity detail page, expanding the Relationships section, clicking on a relationship type (e.g., Contacts), and verifying navigation to a full-page list view displaying related records. This delivers value by providing comprehensive opportunity context.
 
 **Acceptance Scenarios**:
 
 1. **Given** a user is viewing an opportunity detail page, **When** they expand the Relationships section (collapsed by default), **Then** they see a grid showing relationship types with icons and counts (e.g., "ACTIVITIES: 1", "CONTACTS: 3", "DOCUMENTS: 0")
-2. **Given** a user clicks on a relationship item (e.g., "CONTACTS: 3"), **When** they click, **Then** a sub-panel opens below the Relationships section displaying a table of related records with header containing title, close button (X), and Actions dropdown
-3. **Given** a relationship sub-panel is open for Contacts, **When** user views the table, **Then** they see columns: Name, Account Name, Role (e.g., "Technical Decision Maker", "Business Evaluator", "Primary Decision Maker"), Email, Office Phone, and Row Actions (Edit, Unlink icons)
-4. **Given** a relationship sub-panel is open for Activities, **When** user views the table, **Then** they see columns: Subject, Status, Contact, Due Date, Assigned User, and Row Actions
-5. **Given** a relationship sub-panel is open, **When** user clicks "Create" in Actions dropdown, **Then** they navigate to create page for that entity type, and new record is automatically linked to the opportunity
-6. **Given** a relationship sub-panel displays related records, **When** records exist, **Then** the table shows paginated, sortable records with all columns sortable; when no records exist, it shows "No results found." with disabled pagination (0-0 of 0)
-7. **Given** a user is viewing the Contacts sub-panel, **When** they view contact roles, **Then** they see roles such as Technical Decision Maker, Business Evaluator, Primary Decision Maker, etc.
+2. **Given** a user clicks on a relationship item (e.g., "CONTACTS: 3"), **When** they click, **Then** they are navigated to a full-page list view (e.g., `/opportunities/:id/contacts`) displaying a table of related records with header containing title and Actions dropdown
+3. **Given** a user is on a related records list page for Contacts, **When** user views the table, **Then** they see columns: Name, Account Name, Role (e.g., "Technical Decision Maker", "Business Evaluator", "Primary Decision Maker"), Email, Office Phone, and Row Actions (Edit, Unlink icons)
+4. **Given** a user is on a related records list page for Activities, **When** user views the table, **Then** they see columns: Subject, Status, Contact, Due Date, Assigned User, and Row Actions
+5. **Given** a user is on a related records list page, **When** user clicks "Create" in Actions dropdown, **Then** they navigate to create page for that entity type, and new record is automatically linked to the opportunity
+6. **Given** a related records list page displays related records, **When** records exist, **Then** the table shows paginated, sortable records with all columns sortable; when no records exist, it shows "No results found." with disabled pagination (0-0 of 0)
+7. **Given** a user is viewing the Contacts related records list page, **When** they view contact roles, **Then** they see roles such as Technical Decision Maker, Business Evaluator, Primary Decision Maker, etc.
 
 ---
 
@@ -159,8 +159,8 @@ As a user, I want to customize which columns are visible in the opportunities ta
 1. **Given** a user is on the opportunities list page, **When** they click the Columns icon (located to the right of Bulk Action dropdown), **Then** a "Choose Columns" modal opens showing DISPLAYED section (left, with purple badges) and HIDDEN section (right, with red badges)
 2. **Given** a user views the Choose Columns modal, **When** they view the DISPLAYED section, **Then** they see default visible columns: Name, Account Name, Sales Stage, Amount, Close, User, Date Created
 3. **Given** a user views the Choose Columns modal, **When** they view the HIDDEN section, **Then** they see available hidden columns: Type, Lead Source, Next Step, Probability (%), Created By, Modified By
-4. **Given** a user moves a column from DISPLAYED to HIDDEN, **When** they click Save Changes, **Then** that column is hidden in the table
-5. **Given** a user moves a column from HIDDEN to DISPLAYED, **When** they click Save Changes, **Then** that column appears in the table
+4. **Given** a user drags a column tag/badge from DISPLAYED to HIDDEN section, **When** they click Save Changes, **Then** that column is hidden in the table
+5. **Given** a user drags a column tag/badge from HIDDEN to DISPLAYED section, **When** they click Save Changes, **Then** that column appears in the table
 6. **Given** a user customizes columns, **When** they click Save Changes, **Then** their column preferences are stored and persist across browser sessions, and the modal closes
 7. **Given** a user customizes columns, **When** they click Close without saving, **Then** changes are discarded and the modal closes without updating column preferences
 
@@ -229,8 +229,8 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - What happens when import duplicate check finds matches but user wants to proceed?
   - System should continue with import, flag duplicates in results, and allow user to review duplicates separately without preventing successful imports
 
-- What happens when relationship sub-panel is opened but related records fail to load?
-  - System should display error message in sub-panel, allow retry, and not fail the entire opportunity detail page
+- What happens when related records list page fails to load?
+  - System should display error message on the list page, allow retry, and provide navigation back to opportunity detail page
 
 - What happens when a user tries to save an opportunity with a close date in the past?
   - System should validate date format and allow past dates (business rule dependent), or show validation error if only future dates are allowed
@@ -288,7 +288,7 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - **FR-025**: System MUST support pagination with default page size of 20 records and maximum of 100 records
 - **FR-026**: System MUST display Quick Charts panel by default showing Pipeline By Sales Stage chart
 - **FR-027**: System MUST allow users to toggle Quick Charts panel visibility (hide/show)
-- **FR-028**: System MUST allow users to customize visible table columns via "Choose Columns" modal with DISPLAYED section (purple badges) and HIDDEN section (red badges)
+- **FR-028**: System MUST allow users to customize visible table columns via "Choose Columns" modal with DISPLAYED section (purple badges) and HIDDEN section (red badges), using drag-and-drop to move column tags/badges between sections
 - **FR-028.1**: System MUST display default visible columns: Name, Account Name, Sales Stage, Amount, Close, User, Date Created
 - **FR-028.2**: System MUST display available hidden columns: Type, Lead Source, Next Step, Probability (%), Created By, Modified By
 - **FR-029**: System MUST save column preferences per user and persist across sessions when user clicks "Save Changes" button in Choose Columns modal
@@ -306,7 +306,7 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - **FR-048**: System MUST perform duplicate checking using configured fields during import
 - **FR-049**: System MUST return detailed import results with counts (created, updated, errors, duplicates)
 - **FR-050**: System MUST allow users to undo import operation (delete all records created during import)
-- **FR-051**: System MUST support bulk export of selected opportunities in multiple formats (CSV, Excel, PDF)
+- **FR-051**: System MUST support bulk export of selected opportunities in CSV format
 
 #### Bulk Operations
 
@@ -323,9 +323,9 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - **FR-080**: System MUST display Relationships section on opportunity detail page showing relationship types with counts
 - **FR-081**: System MUST support relationship types: Activities, Contacts, Documents, Quotes, Projects, Contracts, Leads, History, Security Groups
 - **FR-082**: System MUST allow users to expand/collapse Relationships section
-- **FR-083**: System MUST allow users to open relationship sub-panels displaying related records
-- **FR-084**: System MUST display related records in sortable, paginated tables within sub-panels
-- **FR-085**: System MUST allow users to create related records from relationship sub-panels
+- **FR-083**: System MUST allow users to navigate to full-page list views for related records when clicking relationship items
+- **FR-084**: System MUST display related records in sortable, paginated tables on full-page list views
+- **FR-085**: System MUST allow users to create related records from related records list pages
 - **FR-086**: System MUST allow users to link/unlink related records
 - **FR-087**: System MUST store relationship metadata (e.g., contact role in opportunity-contact relationship)
   - **Contact Role values**: Technical Decision Maker, Business Evaluator, Primary Decision Maker, and other role classifications
@@ -478,7 +478,7 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - **SC-004**: All functional requirements are implemented and tested - 100% requirement coverage in test suite
 - **SC-005**: 90% of users successfully complete opportunity creation on first attempt without validation errors
 - **SC-006**: Import process completes successfully for files up to 10MB with processing time under 30 seconds
-- **SC-007**: Bulk operations (delete, update, export) complete successfully for up to 1000 records
+- **SC-007**: Bulk operations (delete, update, export) complete successfully for all selected records (no hard limit on selection count, system processes in batches with progress indicators for large selections)
 - **SC-008**: All validation rules are enforced and return clear, actionable error messages
 - **SC-009**: Data integrity is maintained across all operations (no orphaned records, referential integrity preserved)
 - **SC-010**: Authentication and authorization checks prevent unauthorized access 100% of the time
@@ -487,7 +487,7 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - **SC-013**: Recently viewed list accurately reflects last 10 viewed opportunities - tracking works correctly 100% of the time
 - **SC-014**: Lookup modals load and display data within 500ms for typical queries
 - **SC-015**: Pipeline analytics aggregation completes within 1 second for typical datasets
-- **SC-016**: Relationship sub-panels load and display related records within 500ms
+- **SC-016**: Related records list pages load and display related records within 500ms
 - **SC-017**: All error responses follow consistent format with appropriate HTTP status codes and user-friendly messages
 - **SC-018**: System handles import files with up to 10,000 rows without performance degradation
 - **SC-019**: Duplicate checking during import completes within 2 seconds for imports with 1000 rows
@@ -524,6 +524,16 @@ For detailed requirements documents, refer to:
 - Q: When multiple users edit the same opportunity simultaneously, which strategy should the system use? → A: Optimistic locking with conflict detection - Allow edits, detect conflicts on save, show resolution dialog if conflicts exist
 
 - Q: What are the specific responsive breakpoints (screen widths) for mobile, tablet, and desktop layouts? → A: Mobile: < 768px, Tablet: 768px-1024px, Desktop: > 1024px - Standard breakpoints
+
+- Q: How should users move columns between DISPLAYED and HIDDEN sections in the Choose Columns modal? → A: Drag-and-drop - Users drag column tags/badges between sections
+
+- Q: What filter operators should be available for the Opportunity Amount and Expected Close Date filter fields? → A: Standard operators: Equals, Greater Than, Less Than, Between (for both amount and date)
+
+- Q: What file format(s) should the bulk Export operation support? → A: CSV only - Simple, universal format
+
+- Q: What should happen when a user clicks a relationship item (e.g., "CONTACTS: 3") in the Relationships section? → A: Navigate to related records list - Navigate to a full-page list view showing all related records (e.g., `/opportunities/:id/contacts`)
+
+- Q: What should be the maximum number of opportunities that can be selected for bulk operations (Delete, Export, Merge, Mass Update)? → A: No limit - All opportunities matching current filter can be selected (system processes in batches with progress indicators for large selections)
 
 ---
 

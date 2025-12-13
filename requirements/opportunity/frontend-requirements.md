@@ -90,7 +90,6 @@ The Opportunity module provides the frontend interface for managing sales opport
     - OpportunityForm (BASIC tab)
     - OpportunityMetadata (OTHER tab)
     - RelationshipsSection
-    - RelationshipSubPanels
     - InsightsPanel
     - TimelinePanel
   - **Features**:
@@ -216,13 +215,13 @@ The Opportunity module provides the frontend interface for managing sales opport
   - **Feedback**: Relationships grid expands/collapses
   - **Result**: User can view/hide relationship entities with counts
 
-- **FR-FE-035**: Users MUST be able to open relationship sub-panels
+- **FR-FE-035**: Users MUST be able to navigate to related records list page
   - **Trigger**: Clicking on a relationship item (e.g., "CONTACTS: 3")
-  - **Feedback**: Sub-panel opens below Relationships section
-  - **Result**: User can view related records for that relationship type
+  - **Feedback**: Navigates to full-page list view (e.g., `/opportunities/:id/contacts`)
+  - **Result**: User can view related records for that relationship type in a dedicated list page
 
-- **FR-FE-036**: Users MUST be able to create related records from relationship sub-panels
-  - **Trigger**: Clicking "Create" option in Actions dropdown of relationship sub-panel
+- **FR-FE-036**: Users MUST be able to create related records from related records list page
+  - **Trigger**: Clicking "Create" option in Actions dropdown on related records list page
   - **Feedback**: Navigates to create page for that entity type
   - **Result**: New record created and linked to opportunity
 
@@ -252,8 +251,8 @@ The Opportunity module provides the frontend interface for managing sales opport
 
 - **FR-FE-041**: Users MUST be able to perform bulk export
   - **Trigger**: Selecting opportunities and clicking "Export" in Bulk Action dropdown
-  - **Feedback**: Export file downloads
-  - **Result**: Selected opportunities data exported in file format
+  - **Feedback**: CSV file downloads with selected opportunity data
+  - **Result**: Selected opportunities data exported in CSV format
 
 - **FR-FE-042**: Users MUST be able to perform bulk merge
   - **Trigger**: Selecting multiple opportunities and clicking "Merge" in Bulk Action dropdown
@@ -477,8 +476,8 @@ The Opportunity module provides the frontend interface for managing sales opport
   - **Entities**: Activities, History, Documents, Leads, Projects, Quotes, Contacts, Contracts, Security Groups
   - **Behavior**: Expandable/collapsible section
 
-- **FR-FE-076**: System MUST display relationship sub-panels with related records
-  - **Content**: Table of related records for selected relationship type
+- **FR-FE-076**: System MUST display related records list page with related records
+  - **Content**: Full-page list view with table of related records for selected relationship type
   - **Features**: Sortable columns, pagination, row actions
   - **Empty State**: Shows "No results found." when no records exist
 
@@ -637,8 +636,8 @@ The Opportunity module provides the frontend interface for managing sales opport
   - **Optimization**: Lazy loading, pagination, efficient API calls
   - **Caching**: Cache frequently accessed data where appropriate
 
-- **NFR-FE-011**: System MUST lazy load relationship sub-panels
-  - **Behavior**: Load data only when sub-panel is opened
+- **NFR-FE-011**: System MUST lazy load related records list page data
+  - **Behavior**: Load data only when list page is navigated to
   - **Benefit**: Improve initial page load time
 
 - **NFR-FE-012**: System MUST optimize table rendering for large datasets
@@ -786,44 +785,23 @@ The Opportunity module provides the frontend interface for managing sales opport
 
 ### RelationshipsSection
 
-**Description**: Section displaying related entities with counts, expandable to show sub-panels.
+**Description**: Section displaying related entities with counts, allows navigation to full-page list views.
 
 **Props**:
 - `opportunityId` (string): ID of current opportunity
 - `relationships` (object): Relationship counts by type
 - `isExpanded` (boolean): Whether section is expanded
 - `onToggle` (function): Callback when section expanded/collapsed
-- `onRelationshipClick` (function): Callback when relationship item clicked
+- `onRelationshipClick` (function): Callback when relationship item clicked (navigates to list page)
 
 **Usage**:
 - Used in Opportunity detail page
-- Shows all related entities and allows navigation to relationship sub-panels
+- Shows all related entities and allows navigation to full-page related records list views
 
 **Styling**:
 - Grid layout for relationship items
 - Icons for each relationship type
 - Expandable/collapsible section
-
-### RelationshipSubPanel
-
-**Description**: Sub-panel displaying related records for a specific relationship type.
-
-**Props**:
-- `opportunityId` (string): ID of current opportunity
-- `relationshipType` (string): Type of relationship (contacts, activities, etc.)
-- `records` (array): Related records to display
-- `onClose` (function): Callback when panel is closed
-- `onCreate` (function): Callback when Create action clicked
-- `onLink` (function): Callback when Link/Unlink action clicked
-
-**Usage**:
-- Opened when clicking a relationship item in Relationships section
-- Displays table of related records with actions
-
-**Styling**:
-- Panel overlay or expanded section
-- Table with relationship-specific columns
-- Action dropdown in header
 
 ### ImportWizard
 
@@ -1000,14 +978,14 @@ The Opportunity module provides the frontend interface for managing sales opport
 2. User expands Relationships section by clicking chevron
 3. System displays relationship grid showing "CONTACTS: 3"
 4. User clicks on "CONTACTS" relationship item
-5. System opens Contacts sub-panel below Relationships section
-6. System displays table with 3 related contacts
+5. System navigates to related records list page (e.g., `/opportunities/:id/contacts`)
+6. System displays full-page list view with table of 3 related contacts
 7. User reviews contact information (Name, Account, Role, Email, Phone)
 8. User clicks "Create" in Actions dropdown to add new contact
 9. System navigates to Create Contact page
 
 **Entry Point**: Opportunity detail page
-**Exit Point**: Create Contact page (or stays on detail page if viewing only)
+**Exit Point**: Create Contact page (or related records list page if viewing only)
 
 ### Flow 7: Navigate Using Recently Viewed
 
