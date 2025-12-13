@@ -35,12 +35,14 @@ As a sales manager, I want to view a list of opportunities with filtering, sorti
 
 **Acceptance Scenarios**:
 
-1. **Given** a user navigates to Opportunities list page, **When** the page loads, **Then** they see a table displaying opportunities with columns: Name, Account Name, Sales Stage, Amount, Close Date, User, Date Created
-2. **Given** a user is on the opportunities list page, **When** they click a column header, **Then** the table sorts by that column (descending → ascending → normal cycle) with visual indicator showing sort direction
+1. **Given** a user navigates to Opportunities list page, **When** the page loads, **Then** they see a table displaying opportunities with columns: Checkbox, Context Menu (three dots), Name, Account Name, Sales Stage, Amount, Close Date, User, Date Created, and Row Actions (Phone, Calendar, Task, Email, View icons)
+2. **Given** a user is on the opportunities list page, **When** they click a column header, **Then** the table sorts by that column (descending → ascending → normal cycle) with visual indicator showing sort direction (highlighted sort icon when active)
 3. **Given** a user clicks the Filter button, **When** the filter panel opens, **Then** they can filter by Opportunity Name, Account Name, Amount, Sales Stage, Assigned To, Lead Source, Expected Close Date, and Next Step
 4. **Given** a user applies multiple filters, **When** filters are applied, **Then** the system combines filters with AND logic and displays matching opportunities
-5. **Given** a user is on the opportunities list page, **When** the page loads, **Then** the Quick Charts panel displays by default showing Pipeline By Sales Stage bar chart on the right side
+5. **Given** a user is on the opportunities list page, **When** the page loads, **Then** the Quick Charts panel displays by default showing Pipeline By Sales Stage bar chart on the right side with colored bars representing different sales stages and a legend mapping colors to stages
 6. **Given** a user clicks the Insights button, **When** clicked, **Then** the Quick Charts panel hides and the table columns expand to use the additional space
+7. **Given** a user is viewing the opportunities table, **When** they hover over a row, **Then** they see row action icons (Phone, Calendar, Task/Note, Email, View) that allow quick actions on that opportunity
+8. **Given** a user clicks the context menu (three dots) on an opportunity row, **When** they click, **Then** a row-specific actions menu opens with additional options for that opportunity
 
 ---
 
@@ -55,10 +57,14 @@ As a sales representative, I want to view and edit opportunity details, so that 
 **Acceptance Scenarios**:
 
 1. **Given** a user clicks on an opportunity name in the list, **When** they click, **Then** they navigate to the opportunity detail page displaying all opportunity information
-2. **Given** a user is viewing an opportunity detail page, **When** they click the Edit button, **Then** fields become editable and header buttons change to Save/Save And Continue/Cancel
-3. **Given** a user edits opportunity fields, **When** they click Save, **Then** changes are validated, saved, and the page returns to view mode with updated data
-4. **Given** a user edits opportunity fields, **When** they click Cancel, **Then** changes are discarded and the page returns to view mode with original values
-5. **Given** a user updates the sales stage, **When** the change is saved, **Then** the system recalculates days at current sales stage for insights display
+2. **Given** a user is viewing an opportunity detail page, **When** they view the page header, **Then** they see the opportunity name, star icon (favorite/unfavorite), navigation arrows (< >) with record position indicator (e.g., "1 of 118"), and action buttons (Edit, Insights, Actions)
+3. **Given** a user is viewing an opportunity detail page, **When** they click the Edit button, **Then** fields become editable and header buttons change to Save/Save And Continue/Cancel/Insights/Actions
+4. **Given** a user edits opportunity fields, **When** they click Save, **Then** changes are validated, saved, and the page returns to view mode with updated data
+5. **Given** a user edits opportunity fields, **When** they click Save And Continue, **Then** changes are saved and the page remains in edit mode for making additional edits
+6. **Given** a user edits opportunity fields, **When** they click Cancel, **Then** changes are discarded and the page returns to view mode with original values
+7. **Given** a user updates the sales stage, **When** the change is saved, **Then** the system recalculates days at current sales stage for insights display
+8. **Given** a user is viewing an opportunity detail page, **When** they click the navigation arrows (< >), **Then** they navigate to the previous/next opportunity record without returning to the list view
+9. **Given** a user is viewing an opportunity detail page, **When** they click the star icon, **Then** the opportunity is favorited/unfavorited and the star icon state toggles
 
 ---
 
@@ -109,11 +115,13 @@ As a sales representative, I want to view related records (contacts, activities,
 
 **Acceptance Scenarios**:
 
-1. **Given** a user is viewing an opportunity detail page, **When** they expand the Relationships section, **Then** they see a grid showing relationship types with counts (e.g., "CONTACTS: 3", "ACTIVITIES: 5")
-2. **Given** a user clicks on a relationship item (e.g., "CONTACTS: 3"), **When** they click, **Then** a sub-panel opens below displaying a table of related records
-3. **Given** a relationship sub-panel is open, **When** user views the table, **Then** they see relevant columns for that relationship type (e.g., Name, Account, Role, Email for Contacts)
-4. **Given** a relationship sub-panel is open, **When** user clicks "Create" in Actions dropdown, **Then** they navigate to create page for that entity type, and new record is linked to the opportunity
-5. **Given** a relationship sub-panel displays related records, **When** records exist, **Then** the table shows paginated, sortable records; when no records exist, it shows "No results found."
+1. **Given** a user is viewing an opportunity detail page, **When** they expand the Relationships section (collapsed by default), **Then** they see a grid showing relationship types with icons and counts (e.g., "ACTIVITIES: 1", "CONTACTS: 3", "DOCUMENTS: 0")
+2. **Given** a user clicks on a relationship item (e.g., "CONTACTS: 3"), **When** they click, **Then** a sub-panel opens below the Relationships section displaying a table of related records with header containing title, close button (X), and Actions dropdown
+3. **Given** a relationship sub-panel is open for Contacts, **When** user views the table, **Then** they see columns: Name, Account Name, Role (e.g., "Technical Decision Maker", "Business Evaluator", "Primary Decision Maker"), Email, Office Phone, and Row Actions (Edit, Unlink icons)
+4. **Given** a relationship sub-panel is open for Activities, **When** user views the table, **Then** they see columns: Subject, Status, Contact, Due Date, Assigned User, and Row Actions
+5. **Given** a relationship sub-panel is open, **When** user clicks "Create" in Actions dropdown, **Then** they navigate to create page for that entity type, and new record is automatically linked to the opportunity
+6. **Given** a relationship sub-panel displays related records, **When** records exist, **Then** the table shows paginated, sortable records with all columns sortable; when no records exist, it shows "No results found." with disabled pagination (0-0 of 0)
+7. **Given** a user is viewing the Contacts sub-panel, **When** they view contact roles, **Then** they see roles such as Technical Decision Maker, Business Evaluator, Primary Decision Maker, etc.
 
 ---
 
@@ -127,11 +135,14 @@ As a sales manager, I want to view pipeline analytics and opportunity insights, 
 
 **Acceptance Scenarios**:
 
-1. **Given** a user is on the opportunities list page, **When** they view the Quick Charts panel, **Then** they see a bar chart showing pipeline aggregated by sales stage with monetary amounts on Y-axis
-2. **Given** a user applies filters to the opportunities list, **When** filters are applied, **Then** the pipeline chart updates to reflect only filtered opportunities
-3. **Given** a user views an opportunity detail page, **When** they view the Insights panel, **Then** they see "Days at current sales stage" displayed as a large metric
-4. **Given** an Admin user views pipeline analytics, **When** they view the chart, **Then** it includes all opportunities across the organization
-5. **Given** an Employee user views pipeline analytics, **When** they view the chart, **Then** it includes only opportunities assigned to them or within their permission scope
+1. **Given** a user is on the opportunities list page, **When** they view the Quick Charts panel, **Then** they see a vertical bar chart titled "Pipeline By Sales Stage" with monetary amounts on Y-axis (scaled from $0.00 to maximum value) and colored bars representing different sales stages with a legend mapping colors to stage names
+2. **Given** a user views the Pipeline By Sales Stage chart legend, **When** they view the legend, **Then** they see color mappings for sales stages (e.g., Value Proposition: yellow, Qualification: green, Prospecting: orange, Proposal/Price Quote: brown/reddish, Perception Analysis: red, Negotiation/Review: light blue, Needs Analysis: dark blue, Identifying Decision Makers: dark red/maroon)
+3. **Given** a user is on the opportunities list page, **When** they view the chart selector dropdown, **Then** it shows "Pipeline By Sales Stage" as the current selection, indicating multiple chart types are available
+4. **Given** a user applies filters to the opportunities list, **When** filters are applied, **Then** the pipeline chart updates to reflect only filtered opportunities
+5. **Given** a user views an opportunity detail page, **When** they view the Insights panel, **Then** they see "Days at current sales stage" displayed as a large number metric (e.g., "3") with label "DAY(S) THIS OPPORTUNITY HAS BEEN AT THIS SALES STAGE"
+6. **Given** a user views an opportunity detail page, **When** they view the Timeline section, **Then** it displays chronological list of events, activities, updates, and communications, or "No Data" message if no timeline data exists
+7. **Given** an Admin user views pipeline analytics, **When** they view the chart, **Then** it includes all opportunities across the organization
+8. **Given** an Employee user views pipeline analytics, **When** they view the chart, **Then** it includes only opportunities assigned to them or within their permission scope
 
 ---
 
@@ -145,10 +156,13 @@ As a user, I want to customize which columns are visible in the opportunities ta
 
 **Acceptance Scenarios**:
 
-1. **Given** a user is on the opportunities list page, **When** they click the Columns icon (three horizontal lines), **Then** a "Choose Columns" modal opens showing DISPLAYED and HIDDEN column sections
-2. **Given** a user moves a column from DISPLAYED to HIDDEN, **When** they save, **Then** that column is hidden in the table
-3. **Given** a user moves a column from HIDDEN to DISPLAYED, **When** they save, **Then** that column appears in the table
-4. **Given** a user customizes columns, **When** they save preferences, **Then** their column preferences are stored and persist across browser sessions
+1. **Given** a user is on the opportunities list page, **When** they click the Columns icon (located to the right of Bulk Action dropdown), **Then** a "Choose Columns" modal opens showing DISPLAYED section (left, with purple badges) and HIDDEN section (right, with red badges)
+2. **Given** a user views the Choose Columns modal, **When** they view the DISPLAYED section, **Then** they see default visible columns: Name, Account Name, Sales Stage, Amount, Close, User, Date Created
+3. **Given** a user views the Choose Columns modal, **When** they view the HIDDEN section, **Then** they see available hidden columns: Type, Lead Source, Next Step, Probability (%), Created By, Modified By
+4. **Given** a user moves a column from DISPLAYED to HIDDEN, **When** they click Save Changes, **Then** that column is hidden in the table
+5. **Given** a user moves a column from HIDDEN to DISPLAYED, **When** they click Save Changes, **Then** that column appears in the table
+6. **Given** a user customizes columns, **When** they click Save Changes, **Then** their column preferences are stored and persist across browser sessions, and the modal closes
+7. **Given** a user customizes columns, **When** they click Close without saving, **Then** changes are discarded and the modal closes without updating column preferences
 
 ---
 
@@ -163,9 +177,11 @@ As a user, I want to quickly access recently viewed opportunities, so that I can
 **Acceptance Scenarios**:
 
 1. **Given** a user views an opportunity detail page, **When** they view the page, **Then** the system records this view in recently viewed list
-2. **Given** a user hovers over "Opportunities" in navigation, **When** they click "Recently Viewed", **Then** a sub-menu displays showing recently viewed opportunity names (most recent first, up to 10)
-3. **Given** a user clicks on a recently viewed opportunity in the sub-menu, **When** they click, **Then** they navigate directly to that opportunity's detail page
-4. **Given** a user has viewed multiple opportunities, **When** they access Recently Viewed, **Then** opportunities are listed in order of most recently viewed first
+2. **Given** a user hovers over "Opportunities" in navigation, **When** they hover, **Then** a dropdown menu appears with options: Create Opportunity, View Opportunities, Import Opportunities, and Recently Viewed (with right arrow indicator →)
+3. **Given** a user hovers over "Opportunities" and clicks "Recently Viewed", **When** they click, **Then** a sub-menu displays showing recently viewed opportunity names (most recent first, up to 10) with truncated names indicated by "..." for long names
+4. **Given** a user clicks on a recently viewed opportunity name in the sub-menu, **When** they click, **Then** they navigate directly to that opportunity's detail page
+5. **Given** a user has viewed more than 10 opportunities, **When** they access Recently Viewed, **Then** only the most recent 10 opportunities are shown, with oldest entries removed to maintain the limit
+6. **Given** a user has viewed multiple opportunities, **When** they access Recently Viewed, **Then** opportunities are listed in order of most recently viewed first
 
 ---
 
@@ -255,22 +271,27 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - **FR-005**: System MUST allow authenticated users to delete opportunity records (with permission check)
 - **FR-006**: System MUST validate all required fields before saving opportunities
 - **FR-007**: System MUST validate field values against predefined lists (sales stage, type, lead source)
+  - **Sales Stage values**: Prospecting, Qualification, Needs Analysis, Value Proposition, Identifying Decision Makers, Perception Analysis, Proposal/Price Quote, Negotiation/Review, Closed Won, Closed Lost
 - **FR-008**: System MUST validate lookup field references (account, assigned user, campaign must exist)
 - **FR-009**: System MUST auto-generate system fields (ID, dateCreated, dateModified, createdBy, modifiedBy) on creation
 - **FR-010**: System MUST update dateModified and modifiedBy fields automatically on every update
 
 #### List View and Filtering
 
-- **FR-020**: System MUST display opportunities in a sortable table with columns: Name, Account Name, Sales Stage, Amount, Close Date, User, Date Created
-- **FR-021**: System MUST support three-state column sorting (descending → ascending → normal)
+- **FR-020**: System MUST display opportunities in a sortable table with columns: Checkbox (for selection), Context Menu (three dots icon), Name (hyperlink), Account Name, Sales Stage, Amount (currency format), Close Date, User, Date Created, and Row Actions (Phone, Calendar, Task/Note, Email, View icons)
+- **FR-021**: System MUST support three-state column sorting (descending → ascending → normal) with visual indicators (highlighted sort icon when active, not highlighted in normal state)
+- **FR-022.1**: System MUST display row action icons (Phone, Calendar, Task/Note equals icon, Email, View chevron) on each table row for quick actions
+- **FR-022.2**: System MUST provide context menu (three vertical dots) on each table row with row-specific actions
 - **FR-022**: System MUST support filtering by: Opportunity Name, Account Name, Amount, Sales Stage, Assigned To, Lead Source, Expected Close Date, Next Step
 - **FR-023**: System MUST support quick filters: My Items (assigned to current user), Open Items (exclude closed stages), My Favorites
 - **FR-024**: System MUST combine multiple filters with AND logic
 - **FR-025**: System MUST support pagination with default page size of 20 records and maximum of 100 records
 - **FR-026**: System MUST display Quick Charts panel by default showing Pipeline By Sales Stage chart
 - **FR-027**: System MUST allow users to toggle Quick Charts panel visibility (hide/show)
-- **FR-028**: System MUST allow users to customize visible table columns
-- **FR-029**: System MUST save column preferences per user and persist across sessions
+- **FR-028**: System MUST allow users to customize visible table columns via "Choose Columns" modal with DISPLAYED section (purple badges) and HIDDEN section (red badges)
+- **FR-028.1**: System MUST display default visible columns: Name, Account Name, Sales Stage, Amount, Close, User, Date Created
+- **FR-028.2**: System MUST display available hidden columns: Type, Lead Source, Next Step, Probability (%), Created By, Modified By
+- **FR-029**: System MUST save column preferences per user and persist across sessions when user clicks "Save Changes" button in Choose Columns modal
 
 #### Import/Export
 
@@ -307,14 +328,17 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - **FR-085**: System MUST allow users to create related records from relationship sub-panels
 - **FR-086**: System MUST allow users to link/unlink related records
 - **FR-087**: System MUST store relationship metadata (e.g., contact role in opportunity-contact relationship)
+  - **Contact Role values**: Technical Decision Maker, Business Evaluator, Primary Decision Maker, and other role classifications
 
 #### Analytics and Insights
 
 - **FR-100**: System MUST aggregate pipeline data by sales stage for chart visualization
-- **FR-101**: System MUST display Pipeline By Sales Stage bar chart in Quick Charts panel
+- **FR-101**: System MUST display Pipeline By Sales Stage vertical bar chart in Quick Charts panel with colored bars representing stages, monetary amounts on Y-axis, and a legend mapping colors to stage names
+- **FR-101.1**: System MUST provide chart selector dropdown in Quick Charts panel allowing selection of different chart types (default: Pipeline By Sales Stage)
 - **FR-102**: System MUST update chart data when filters are applied
 - **FR-103**: System MUST calculate days at current sales stage for each opportunity
-- **FR-104**: System MUST display days at current sales stage metric in Insights panel on detail page
+- **FR-104**: System MUST display days at current sales stage metric in Insights panel on detail page as a large number with label "DAY(S) THIS OPPORTUNITY HAS BEEN AT THIS SALES STAGE"
+- **FR-104.1**: System MUST display Timeline section on opportunity detail page showing chronological events, activities, and communications, or "No Data" message when no timeline data exists
 - **FR-105**: System MUST recalculate days at current sales stage when sales stage changes
 - **FR-106**: System MUST apply role-based filtering to analytics (Admin sees all, Employee sees filtered)
 
@@ -331,10 +355,11 @@ As a sales representative, I want to search and filter opportunities quickly, so
 #### Recently Viewed
 
 - **FR-140**: System MUST track when users view opportunity detail pages
-- **FR-141**: System MUST store recently viewed opportunities per user (most recent N, default: 10)
-- **FR-142**: System MUST display recently viewed opportunities in navigation sub-menu
+- **FR-141**: System MUST store recently viewed opportunities per user (most recent N, default: 10), removing oldest entries when limit is exceeded
+- **FR-142**: System MUST display recently viewed opportunities in navigation sub-menu (accessed via "Recently Viewed" option with right arrow indicator in Opportunities dropdown)
 - **FR-143**: System MUST order recently viewed list by most recently viewed first
 - **FR-144**: System MUST allow users to navigate directly to recently viewed opportunities from sub-menu
+- **FR-144.1**: System MUST truncate long opportunity names in recently viewed sub-menu with "..." indicator
 
 #### Authentication and Authorization
 
@@ -390,13 +415,19 @@ As a sales representative, I want to search and filter opportunities quickly, so
 - Belongs to one Account (via accountId)
 - Assigned to one User (via assignedToId, optional)
 - Associated with one Campaign (via campaignId, optional)
-- Has many Contacts (many-to-many with role)
+- Has many Contacts (many-to-many with role) - Contact roles include: Technical Decision Maker, Business Evaluator, Primary Decision Maker
 - Has many Activities (calls, meetings, tasks, emails)
 - Has many Documents
 - Has many Quotes
 - Has many Projects
 - Has many Contracts
 - Has many Leads
+- Has History records
+- Associated with Security Groups
+
+**Additional Attributes**:
+- Favorite flag (for favoriting/unfavoriting opportunities)
+- Record position in list (for navigation between records)
 
 **Business Rules**:
 - Name must be unique per account (or globally, business rule dependent)
